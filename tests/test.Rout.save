@@ -14,6 +14,7 @@ Type `demo()' for some demos, `help()' for on-line help, or
 Type `q()' to quit R.
 
 > library(cmprsk)
+Loading required package: survival5 
 > 
 > set.seed(2)
 > ss <- rexp(100)

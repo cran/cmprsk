@@ -1,6 +1,6 @@
 Package: cmprsk
-Version: 2.0-1
-Date: 2001-mar-11
+Version: 2.0-2
+Date: 2001-mar-15
 Title: Subdistribution Analysis of Competing Risks
 Author: Bob Gray <gray@jimmy.harvard.edu>
 Maintainer: Bob Gray <gray@jimmy.harvard.edu>
