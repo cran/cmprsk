@@ -89,19 +89,19 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
   else b <- init
   stepf <- .5
   for (ll in 0:maxiter) {
-    z <- .C('crrfsv_',as.double(ftime),as.integer(fstatus),
+    z <- .Fortran('crrfsv',as.double(ftime),as.integer(fstatus),
                   as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                   as.integer(np),as.double(cov2),as.integer(npt),
                   as.double(tfs),as.integer(ndf),as.double(uuu),
                   as.integer(length(uu)),as.integer(cengroup),as.double(b),
                   double(1),double(np),double(np*np),double(np),double(np),
-                  double(np*np))[15:17]
+                  double(np*np),PACKAGE = "cmprsk")[15:17]
     if (max(abs(z[[2]])*pmax(abs(b),1)) < max(abs(z[[1]]),1)*gtol) {
-      converge <- T
+      converge <- TRUE
       break
     }
     if (ll==maxiter) {
-      converge <- F
+      converge <- FALSE
       break
     }
     h <- z[[3]]
@@ -110,33 +110,33 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
 ### matrix should be pd except in rare circumstances
     sc <- -solve(h,z[[2]])
     bn <- b+sc
-    fbn <- .C('crrf_',as.double(ftime),as.integer(fstatus),
+    fbn <- .Fortran('crrf',as.double(ftime),as.integer(fstatus),
                   as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                   as.integer(np),as.double(cov2),as.integer(npt),
                   as.double(tfs),as.integer(ndf),as.double(uuu),
                   as.integer(length(uu)),as.integer(cengroup),as.double(bn),
-                  double(1),double(np))[[15]]
+                  double(1),double(np),PACKAGE = "cmprsk")[[15]]
 # backtracking loop
     i <- 0
     while (is.na(fbn) || fbn>z[[1]]+(1e-4)*sum(sc*z[[2]])) {
       i <- i+1
       sc <- sc*stepf
       bn <- b+sc
-      fbn <- .C('crrf_',as.double(ftime),as.integer(fstatus),
+      fbn <- .Fortran('crrf',as.double(ftime),as.integer(fstatus),
                   as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                   as.integer(np),as.double(cov2),as.integer(npt),
                   as.double(tfs),as.integer(ndf),as.double(uuu),
                   as.integer(length(uu)),as.integer(cengroup),as.double(bn),
-                  double(1),double(np))[[15]]
+                  double(1),double(np),PACKAGE = "cmprsk")[[15]]
       if (i>20) break
     }
     if (i>20) {
-      converge <- F
+      converge <- FALSE
       break
     }
     b <- c(bn)
   }
-  v <- .C('crrvv_',as.double(ftime),as.integer(fstatus),
+  v <- .Fortran('crrvv',as.double(ftime),as.integer(fstatus),
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
@@ -144,22 +144,22 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                 double(np*np),double(np*np),double(np*np),
                 double(length(ftime)*(np+1)),double(np),double(np),
                 double(2*np),double(np),double(length(uu)*np),
-                integer(length(uu)))[15:16]
+                integer(length(uu)),PACKAGE = "cmprsk")[15:16]
   dim(v[[2]]) <- dim(v[[1]]) <- c(np,np)
   h <- solve(v[[1]])
   v <- h %*% v[[2]] %*% t(h)
-  r <- .C('crrsr_',as.double(ftime),as.integer(fstatus),
+  r <- .Fortran('crrsr',as.double(ftime),as.integer(fstatus),
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
                 as.integer(length(uu)),as.integer(cengroup),as.double(b),
-                double(ndf*np),double(np),double(np))[[15]]
-  bj <- .C('crrfit_',as.double(ftime),as.integer(fstatus),
+                double(ndf*np),double(np),double(np),PACKAGE = "cmprsk")[[15]]
+  bj <- .Fortran('crrfit',as.double(ftime),as.integer(fstatus),
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
                 as.integer(length(uu)),as.integer(cengroup),as.double(b),
-                double(ndf),double(np))[[15]]
+                double(ndf),double(np),PACKAGE = "cmprsk")[[15]]
 
   z <- list(coef=b,loglik=-z[[1]],score=-z[[2]],inf=matrix(z[[3]],np,np),var=v,res=t(matrix(r,nrow=np)),uftime=uft,bfitj=bj,tfs=as.matrix(tfs),converged=converge)
   class(z) <- 'crr'
@@ -287,18 +287,18 @@ cuminc <- function(ftime,fstatus,group,strata,rho=0,cencode=0,subset,na.action=n
       n2 <- length(unique(d$time[cgind & causeind==1]))
       n2 <- 2*n2+2
       tmp <- double(n2)
-      z <- .C("cinc_",as.double(d$time[cgind]),as.integer(censind[cgind]),
+      z <- .Fortran("cinc",as.double(d$time[cgind]),as.integer(censind[cgind]),
               as.integer(causeind[cgind]),as.integer(ncg),
-              x=tmp,f=tmp,v=tmp)
+              x=tmp,f=tmp,v=tmp,PACKAGE = "cmprsk")
       pf[[l]] <- list(time=z$x,est=z$f,var=z$v)
     }
     if (ng>1) {
       causeind <- 2*censind-causeind
-      z2 <- .C("crstm_",as.double(d$time),as.integer(causeind),
+      z2 <- .Fortran("crstm",as.double(d$time),as.integer(causeind),
                as.integer(d$group),as.integer(d$strata),as.integer(no),
                as.double(rho),as.integer(nst),as.integer(ng),s,v,
                as.double(d$time),as.integer(causeind),as.integer(d$group),
-               vt,s,vt,double((4+3*ng)*ng),integer(4*ng))
+               vt,s,vt,double((4+3*ng)*ng),integer(4*ng),PACKAGE = "cmprsk")
       stat[ii] <- -1
       a <- qr(z2[[10]])
       if (a$rank==ncol(a$qr)) {
@@ -349,11 +349,11 @@ timepoints <- function(w,times) {
   oute <- matrix(NA,ncol=nt,nrow=ng)
   outv <- oute
   storage.mode(ind) <- "integer"
-  slct <- rep(T,ng)
+  slct <- rep(TRUE,ng)
   for (i in 1:ng) {
-    if (is.null((w[[i]])$est)) { slct[i] <- F} else {
-      z <- .C("tpoi_",as.double(w[[i]][[1]]),
-             as.integer(length(w[[i]][[1]])),ind[i,],times,nt)
+    if (is.null((w[[i]])$est)) { slct[i] <- FALSE} else {
+      z <- .Fortran("tpoi",as.double(w[[i]][[1]]),
+         as.integer(length(w[[i]][[1]])),ind[i,],times,nt,PACKAGE = "cmprsk")
       ind[i,] <- z[[3]]
       oute[i,ind[i,]>0] <- w[[i]][[2]][z[[3]]]
       if (length(w[[i]])>2) outv[i,ind[i,]>0] <- w[[i]][[3]][z[[3]]]
@@ -361,7 +361,7 @@ timepoints <- function(w,times) {
   }
   dimnames(oute) <- list(names(w)[1:ng],as.character(times))
   dimnames(outv) <- dimnames(oute)
-  list(est=oute[slct,,drop=F],var=outv[slct,,drop=F])
+  list(est=oute[slct,,drop=FALSE],var=outv[slct,,drop=FALSE])
 }
 
 plot.cuminc <-  function(z,main=" ",curvlab,ylim=c(0,1),xlim,wh=2,xlab="Years",
@@ -390,7 +390,7 @@ ylab="Probability",lty=1:length(z),color=1,...) {
   plot(z[[1]][[1]],z[[1]][[2]],type="n",ylim=ylim,xlim=xlim,
        main=main,xlab=xlab,ylab=ylab,bty="l",...)
   if (length(wh) != 2) {
-      wh _ c(xlim[1],ylim[2])
+      wh <- c(xlim[1],ylim[2])
   }
   legend(wh[1],wh[2],legend=curvlab,col=color,lty=lty,bty="n",bg=-999999,...)
   for (i in 1:nc) {
