@@ -147,7 +147,7 @@ c  cause 1, and failing from cause 2, at this time
 c skmm is left continuous, and skm right continuous, km est.
       skm(i)=skmm(i)*(rs(i)-td)/rs(i)
 c f1m is left continuous, and f1 right continuous, cuminc est.
-      f1(i)=f1m(i)+skmm(i)*d(1,i)/rs(i)
+      f1(i)=f1m(i)+(skmm(i)*d(1,i))/rs(i)
 c in notation of the paper, tr is \sum_r\hat{h}_r, and tq is \sum_r R_r
       tr=tr+rs(i)/skmm(i)
       tq=tq+rs(i)*(1-f1m(i))/skmm(i)
@@ -203,8 +203,9 @@ c in notation of the paper, tr is \sum_r\hat{h}_r, and tq is \sum_r R_r
       if (skm(k).le.0.or.d(2,k).le.0) go to 82
       t4=(1-f)/skm(k)
       t5=1
-      if (d(2,k).gt.1) t5=1-(d(2,k)-1)/(rs(k)-1)
-      t3=t5*(skmm(k)**2)*d(2,k)/(rs(k)**2)
+c following line changed 3-24-04 - had been performed as integer
+      if (d(2,k).gt.1) t5=1-(d(2,k)-1.d0)/(rs(k)-1.d0)
+      t3=t5*((skmm(k)**2)*d(2,k))/(rs(k)**2)
       v3(k)=v3(k)+t4*t4*t3
       do 80 i=1,ng1
       t1=t4*c(i,k)
