@@ -1,6 +1,6 @@
 
-R : Copyright 2002, The R Development Core Team
-Version 1.5.1  (2002-06-17)
+R : Copyright 2003, The R Development Core Team
+Version 1.7.1  (2003-06-16)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -14,7 +14,8 @@ Type `demo()' for some demos, `help()' for on-line help, or
 Type `q()' to quit R.
 
 > library(cmprsk)
-Loading required package: survival 
+> u <- R.Version()
+> if (u$major>'1' | u$major == '1' & u$minor>'6.2') RNGversion("1.6.2")
 > 
 > set.seed(2)
 > ss <- rexp(100)

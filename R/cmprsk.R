@@ -49,17 +49,16 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
   ftime <- d$ftime
   cenind <- ifelse(d$fstatus==cencode,1,0)
   fstatus <- ifelse(d$fstatus==failcode,1,2*(1-cenind))
-  cengroup <- as.factor(d$cengroup)
-  ncg <- length(levels(cengroup))
-  levels(cengroup) <- format(1:ncg)
+  ucg <- sort(unique.default(d$cengroup))
+  cengroup <- match(d$cengroup,ucg)
+  ncg <- length(ucg)
   uuu <- matrix(0,nrow=ncg,ncol=length(ftime))
   for (k in 1:ncg) {
-    u <- do.call('survfit',list(formula=Surv(ftime,cenind)~1,data=data.frame(ftime,cenind,cengroup),subset=cengroup==format(k)))
+    u <- do.call('survfit',list(formula=Surv(ftime,cenind)~1,data=data.frame(ftime,cenind,cengroup),subset=cengroup==k))
 ### note: want censring dist km at ftime-
     u <- summary(u,times=sort(ftime*(1-.Machine$double.eps)))
     uuu[k,1:length(u$surv)] <- u$surv
   }
-  cengroup <- codes(cengroup)
   uft <- sort(unique(ftime[fstatus==1]))
   ndf <- length(uft)
   if (nc2 == 0) {
