@@ -1,10 +1,5 @@
 # Copyright (C) 2000 Robert Gray
 # distributed under the terms of the GNU public license
-.First.lib <- function(a,b) {
-  require(survival5)
-  library.dynam('cmprsk',b,a)
-}
-
 crr <-
 # function for regression modeling of subdistribution functions
 # arguments: 
