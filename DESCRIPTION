@@ -1,6 +1,6 @@
 Package: cmprsk
-Version: 2.1-4
-Date: 2003-oct-11
+Version: 2.1-5
+Date: 2004-oct-6
 Title: Subdistribution Analysis of Competing Risks
 Author: Bob Gray <gray@jimmy.harvard.edu>
 Maintainer: Bob Gray <gray@jimmy.harvard.edu>
@@ -13,3 +13,4 @@ Description: Estimation, testing and regression modeling of
  of a competing risk, JASA, 94:496-509.
 License: GPL version 2 or newer
 URL: http://www.r-project.org, http://biowww.dfci.harvard.edu/~gray
+Packaged: Wed Oct  6 10:33:45 2004; gray

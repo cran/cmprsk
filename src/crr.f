@@ -38,7 +38,7 @@ c xb,xbt,vt are temporary storage
       double precision t2(n),b(np),s(np),v(np,np),lik,tf(ndf,ncov2)
       double precision xb(np),xb1,vt(np,np),wt(ncg,n),cft,twf
       double precision x(n,ncov),x2(n,ncov2),wk,xb1o,twt,xbt(np)
-      integer ici(n),icg(n),n,np,i,j,iuc,ncov,ncov2,ncg,ndf,ldf,k
+      integer ici(n),icg(n),n,np,i,j,iuc,ncov,ncov2,ncg,ndf,ldf,k,itmp
       lik=0.d0
       do 1 i=1,np
          s(i)=0
@@ -52,8 +52,9 @@ c
       iuc=n
       ldf=ndf+1
 c find next failure time
- 98   do 10 i=iuc,1,-1
-         iuc=i
+ 98   itmp=iuc
+      do 10 i=iuc,1,-1
+         itmp=i
          if (ici(i).eq.1) then
             cft=t2(i)
             go to 11
@@ -61,11 +62,12 @@ c find next failure time
  10   continue
 c no more failures
       return
- 11   ldf=ldf-1
+ 11   iuc=itmp
+      ldf=ldf-1
       twf=0
       do 13 i=iuc,1,-1
          if (t2(i).lt.cft) go to 14
-         iuc=i
+         itmp=i
          if (ici(i).eq.1) then
             call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
      $           xbt)
@@ -78,7 +80,8 @@ c using a minimization routine, so neg of objective fcn, scores, etc
          endif
  13   continue 
 c calculate sums over risk set
- 14   xb1=0
+ 14   iuc=itmp
+      xb1=0
       xb1o=xb1
       do 3 i=1,np
          xb(i)=0
@@ -141,13 +144,14 @@ c icrs,wk,xb,xbt,vt are temporary storage
       double precision t2(n),b(np),lik,tf(ndf,ncov2)
       double precision xb1,wt(ncg,n),cft,twf,xbt(np)
       double precision x(n,ncov),x2(n,ncov2),wk,twt
-      integer ici(n),icg(n),n,np,i,iuc,ncov,ncov2,ncg,ndf,ldf
+      integer ici(n),icg(n),n,np,i,iuc,ncov,ncov2,ncg,ndf,ldf,itmp
       lik=0.d0
       iuc=n
       ldf=ndf+1
 c find next failure time
- 98   do 10 i=iuc,1,-1
-         iuc=i
+ 98   itmp=iuc
+      do 10 i=iuc,1,-1
+         itmp=i
          if (ici(i).eq.1) then
             cft=t2(i)
             go to 11
@@ -155,11 +159,12 @@ c find next failure time
  10   continue
 c no more failures
       return
- 11   ldf=ldf-1
+ 11   iuc=itmp
+      ldf=ldf-1
       twf=0
       do 13 i=iuc,1,-1
          if (t2(i).lt.cft) go to 14
-         iuc=i
+         itmp=i
          if (ici(i).eq.1) then
             call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
      $           xbt)
@@ -168,7 +173,8 @@ c no more failures
          endif
  13   continue 
 c calculate sums over risk set
- 14   xb1=0
+ 14   iuc=itmp
+      xb1=0
       do 15 i=1,n
          if (t2(i).lt.cft) then
             if (ici(i).le.1) go to 15
@@ -394,7 +400,7 @@ c dNc portion of psi
                st(k,2)=st(k,2)+qu(k)/icrsk(icg(i))
  45         continue 
          endif
- 888     do 271 j1=np,1,-1
+         do 271 j1=np,1,-1
             st(j1,1)=st(j1,1)+st(j1,2)
             do 272 j2=j1,np
                v2(j1,j2)=v2(j1,j2)+st(j1,1)*st(j2,1)
@@ -438,7 +444,7 @@ c xb,xbt are temporary storage
       double precision t2(n),b(np),tf(ndf,ncov2)
       double precision xb(np),wt(ncg,n),cft,res(np,ndf)
       double precision x(n,ncov),x2(n,ncov2),wk,twt,twf,xbt(np),xb1
-      integer ici(n),icg(n),n,np,i,j,ncov,ncov2,ncg,ndf,ldf,iuc
+      integer ici(n),icg(n),n,np,i,j,ncov,ncov2,ncg,ndf,ldf,iuc,itmp
       do 1 i=1,ndf
          do 2 j=1,np
             res(j,i)=0
@@ -447,8 +453,9 @@ c xb,xbt are temporary storage
       iuc=n
       ldf=ndf+1
 c find next failure time
- 98   do 10 i=iuc,1,-1
-         iuc=i
+ 98   itmp=iuc
+      do 10 i=iuc,1,-1
+         itmp=i
          if (ici(i).eq.1) then
             cft=t2(i)
             go to 11
@@ -456,11 +463,12 @@ c find next failure time
  10   continue
 c no more failures
       return
- 11   ldf=ldf-1
+ 11   iuc=itmp
+      ldf=ldf-1
       twf=0
       do 13 i=iuc,1,-1
          if (t2(i).lt.cft) go to 14
-         iuc=i
+         itmp=i
          if (ici(i).eq.1) then
             call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
      $           xbt)
@@ -471,7 +479,8 @@ c no more failures
          endif
  13   continue 
 c calculate sums over risk set
- 14   xb1=0
+ 14   iuc=itmp
+      xb1=0
       do 3 i=1,np
          xb(i)=0
  3    continue 
@@ -521,15 +530,16 @@ c xbt is temporary storage
       double precision t2(n),b(np),tf(ndf,ncov2)
       double precision wt(ncg,n),cft,res(ndf)
       double precision x(n,ncov),x2(n,ncov2),wk,twt,twf,xbt(np),xb1
-      integer ici(n),icg(n),n,np,i,ncov,ncov2,ncg,ndf,ldf,iuc
+      integer ici(n),icg(n),n,np,i,ncov,ncov2,ncg,ndf,ldf,iuc,itmp
       do 1 i=1,ndf
          res(i)=0
  1    continue 
       iuc=1
       ldf=0
 c find next failure time
- 98   do 10 i=iuc,n
-         iuc=i
+ 98   itmp=iuc
+      do 10 i=iuc,n
+         itmp=i
          if (ici(i).eq.1) then
             cft=t2(i)
             go to 11
@@ -537,15 +547,17 @@ c find next failure time
  10   continue
 c no more failures
       return
- 11   ldf=ldf+1
+ 11   iuc=itmp
+      ldf=ldf+1
       twf=0
       do 13 i=iuc,n
          if (t2(i).gt.cft) go to 14
-         iuc=i
+         itmp=i
          if (ici(i).eq.1) twf=twf+1
  13   continue 
 c calculate sums over risk set
- 14   xb1=0
+ 14   iuc=itmp
+      xb1=0
       do 15 i=1,n
          if (t2(i).lt.cft) then
             if (ici(i).le.1) go to 15

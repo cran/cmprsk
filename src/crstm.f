@@ -77,7 +77,7 @@ c
       vs(j,i)=vs(i,j)
  332  continue
   31  continue
- 996  return
+      return
       end
 
       subroutine crst(y,m,ig,n,ng,rho,s,v,ng1,nv,f1m,f1,skmm,

@@ -25,9 +25,10 @@ c assuming unique values sorted in ascending order
          else
             k=k-1
          endif
- 20   continue 
+ 20   continue
+c error in the following loop corrected 9-28-04 
       do 30 i=1,l
-         ind(l)=0
+         ind(i)=0
  30   continue 
       return
       end
