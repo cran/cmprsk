@@ -20,7 +20,7 @@ crr <-
 #     is estimated separately within these groups)
 #  failcode = code of fstatus that denotes the failure type of interest
 #  cencode = code of fstatus that denotes censored observations
-#  subset = logical vector length(ftime) indicating which cases to include (T)
+#  subset = logical vector length(ftime) indicating which cases to include
 #  na.action = function defining action to take for cases that have NA for
 #     any of ftime, fstatus, cov1, cov2 cengroup, or subset.
 #  gtol = iteration stops when a function of the gradient is < gtol.
@@ -233,7 +233,7 @@ cuminc <- function(ftime,fstatus,group,strata,rho=0,cencode=0,subset,na.action=n
 # strata variables for the tests (omit if none), rho is the 
 # power of the weight function used in the tests, cencode is the value
 # of fstatus which indicates that a time is censored (default is 0)
-# subset = logical vector length(ftime) indicating which cases to include (T)
+# subset = logical vector length(ftime) indicating which cases to include
 # na.action = function defining action to take for cases that have NA for
 #     any of ftime, fstatus, group, strata, or subset.
 # output is a list giving the estmated cuminc

@@ -89,9 +89,9 @@ probabilities in multiple decrement models, ANNALS OF STATISTICS,
 \examples{
 set.seed(2)
 ss <- rexp(100)
-gg <- factor(sample(1:3,100,replace=T),1:3,c('a','b','c'))
-cc <- sample(0:2,100,replace=T)
-strt <- sample(1:2,100,replace=T)
+gg <- factor(sample(1:3,100,replace=TRUE),1:3,c('a','b','c'))
+cc <- sample(0:2,100,replace=TRUE)
+strt <- sample(1:2,100,replace=TRUE)
 print(xx <- cuminc(ss,cc,gg,strt))
 #Tests:
 #      stat        pv

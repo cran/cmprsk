@@ -2,9 +2,9 @@ library(cmprsk)
 
 set.seed(2)
 ss <- rexp(100)
-gg <- factor(sample(1:3,100,replace=T),1:3,c('a','b','c'))
-cc <- sample(0:2,100,replace=T)
-strt <- sample(1:2,100,replace=T)
+gg <- factor(sample(1:3,100,replace=TRUE),1:3,c('a','b','c'))
+cc <- sample(0:2,100,replace=TRUE)
+strt <- sample(1:2,100,replace=TRUE)
 dd <- data.frame(ss=abs(rnorm(100)))
 d2 <- data.frame(ssd=ss,ggd=gg,ccd=cc,strtd=strt,X=c(rep(1,80),rep(0,20)))
 gg2 <- gg
@@ -24,7 +24,7 @@ print(xx <- cuminc(ssd,ccd,gg2,strtd,subset=ggd != 'b'))
 print(xx <- cuminc(ssd,ccd,gg2,strtd,subset=gg2 != 'b'))
 detach(d2)
 
-cv <- matrix(sample(0:1,3*100,replace=T),ncol=3)
+cv <- matrix(sample(0:1,3*100,replace=TRUE),ncol=3)
 cv[c(1,10,20)] <- NA
 print(xx <- crr(ss,cc,cv))
 cov2 <- cbind(cv[,1],cv[,1])

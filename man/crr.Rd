@@ -79,7 +79,7 @@ contribution to each score (columns) at each unique failure time
 \item{$bfitj}{jumps in the Breslow-type estimate of the underlying
   sub-distribution cumulative hazard (used by predict.crr())}
 \item{$tfs}{the tfs matrix (output of tf(), if used)}
-\item{$converged}{T if the iterative algorithm converged.}
+\item{$converged}{TRUE if the iterative algorithm converged.}
 }
 \details{
 Fits the 'proportional subdistribution hazards' regression model
@@ -126,7 +126,7 @@ subdistribution of a competing risk.  JASA 94:496-509.
 # simulated data to test 
 set.seed(10)
 ftime <- rexp(200)
-fstatus <- sample(0:2,200,replace=T)
+fstatus <- sample(0:2,200,replace=TRUE)
 cov <- matrix(runif(600),nrow=200)
 print(z <- crr(ftime,fstatus,cov))
 # convergence:  TRUE 
