@@ -8,13 +8,13 @@ Plot method for cuminc.  Creates labeled line plots from appropriate
 list input, for example, the output from \code{cuminc()}.
 }
 \usage{
-plot.cuminc(z, main=" ", curvlab, ylim=c(0, 1), xlim, wh=2, xlab="Years", 
-ylab="Probability", lty=1:length(z), color=1, \dots)
+plot.cuminc(x, main=" ", curvlab, ylim=c(0, 1), xlim, wh=2, xlab="Years", 
+ylab="Probability", lty=1:length(x), color=1, \dots)
 }
 \arguments{
-\item{z}{
+\item{x}{
 a list, with each component representing one curve in the plot.  Each
-component of \code{z} is itself a list whose first component gives the x values
+component of \code{x} is itself a list whose first component gives the x values
 and 2nd component the y values to be plotted.  Although written for
 cumulative incidence curves, can in principle be used for any set of lines.
 }
@@ -22,8 +22,8 @@ cumulative incidence curves, can in principle be used for any set of lines.
 the main title for the plot.
 }
 \item{curvlab}{
-Curve labels for the plot.  Default is \code{names(z)}, or if that is missing,
-\code{1:nc}, where \code{nc} is the number of curves in \code{z}.
+Curve labels for the plot.  Default is \code{names(x)}, or if that is missing,
+\code{1:nc}, where \code{nc} is the number of curves in \code{x}.
 }
 \item{ylim}{
 yaxis limits for plot
@@ -45,7 +45,7 @@ X axis label
 }
 \item{lty}{
 vector of line types.  Default \code{1:nc} (\code{nc} is the number of
-curves in \code{z}).  For color displays, \code{lty=1, color=1:nc}, might
+curves in \code{x}).  For color displays, \code{lty=1, color=1:nc}, might
 be more appropriate.  If \code{length(lty)<nc}, then \code{lty[1]} is
 used for all. 
 }

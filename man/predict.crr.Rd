@@ -7,10 +7,10 @@ Estimate subdistribution functions from crr output
 predict method for crr
 }
 \usage{
-predict.crr(z, cov1, cov2)
+predict.crr(object, cov1, cov2, \dots)
 }
 \arguments{
-\item{z}{
+\item{object}{
 output from crr
 }
 \item{cov1, cov2}{
@@ -18,7 +18,11 @@ each row of cov1 and cov2 is a set of covariate values where the
 subdistribution should be estimated.  The columns of cov1 and cov2 must
 be in the same order as in the original call to crr.  Each must be
 given if present in the original call to crr.
-}}
+}
+\item{...}{
+additional arguments are ignored (included for compatibility with generic).
+}
+}
 \value{
 Returns a matrix with the unique type 1 failure times in the first
 column, and the other columns giving the estimated subdistribution

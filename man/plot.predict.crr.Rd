@@ -7,11 +7,11 @@ Plot estimated subdistribution functions
 plot method for \code{predict.crr}
 }
 \usage{
-plot.predict.crr(z, lty=1:(ncol(z)-1), color=1,  ylim=c(0, max(z[, -1])),
-xmin=0, xmax=max(z[, 1]), \dots)
+plot.predict.crr(x, lty=1:(ncol(x)-1), color=1,  ylim=c(0, max(x[, -1])),
+xmin=0, xmax=max(x[, 1]), \dots)
 }
 \arguments{
-\item{z}{
+\item{x}{
 Output from \code{predict.crr}
 }
 \item{lty}{

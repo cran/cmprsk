@@ -7,12 +7,14 @@ prints summary of a crr object
 print method for crr objects
 }
 \usage{
-print.crr(z)
+print.crr(x, \dots)
 }
 \arguments{
-\item{z}{
+\item{x}{
 crr object (output from \code{crr()})
-}}
+}
+\item{...}{additional arguments to \code{print()}}
+}
 \details{
 prints the convergence status, the estimated coefficients, the
 estimated standard errors, and the two-sided p-values for the test of

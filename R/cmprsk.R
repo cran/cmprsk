@@ -50,14 +50,15 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
   cenind <- ifelse(d$fstatus==cencode,1,0)
   fstatus <- ifelse(d$fstatus==failcode,1,2*(1-cenind))
   cengroup <- as.factor(d$cengroup)
-  levels(cengroup) <- format(1:length(levels(cengroup)))
-  u <- do.call('survfit',list(formula=Surv(ftime,cenind)~cengroup,data=data.frame(ftime,cenind,cengroup)))
+  ncg <- length(levels(cengroup))
+  levels(cengroup) <- format(1:ncg)
+  uuu <- matrix(0,nrow=ncg,ncol=length(ftime))
+  for (k in 1:ncg) {
+    u <- do.call('survfit',list(formula=Surv(ftime,cenind)~1,data=data.frame(ftime,cenind,cengroup),subset=cengroup==format(k)))
 ### note: want censring dist km at ftime-
-  u <- summary(u,times=sort(ftime*(1-.Machine$double.eps)))
-  if (is.null(u$times.strata)) u$times.strata <- cengroup
-  uu <- table(u$times.strata)
-  uuu <- matrix(0,nrow=length(uu),ncol=length(ftime))
-  for (i in 1:length(uu)) uuu[i,1:uu[i]] <- u$surv[u$times.strata == names(uu)[i]]
+    u <- summary(u,times=sort(ftime*(1-.Machine$double.eps)))
+    uuu[k,1:length(u$surv)] <- u$surv
+  }
   cengroup <- codes(cengroup)
   uft <- sort(unique(ftime[fstatus==1]))
   ndf <- length(uft)
@@ -88,7 +89,7 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                   as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                   as.integer(np),as.double(cov2),as.integer(npt),
                   as.double(tfs),as.integer(ndf),as.double(uuu),
-                  as.integer(length(uu)),as.integer(cengroup),as.double(b),
+                  as.integer(ncg),as.integer(cengroup),as.double(b),
                   double(1),double(np),double(np*np),double(np),double(np),
                   double(np*np),PACKAGE = "cmprsk")[15:17]
     if (max(abs(z[[2]])*pmax(abs(b),1)) < max(abs(z[[1]]),1)*gtol) {
@@ -109,7 +110,7 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                   as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                   as.integer(np),as.double(cov2),as.integer(npt),
                   as.double(tfs),as.integer(ndf),as.double(uuu),
-                  as.integer(length(uu)),as.integer(cengroup),as.double(bn),
+                  as.integer(ncg),as.integer(cengroup),as.double(bn),
                   double(1),double(np),PACKAGE = "cmprsk")[[15]]
 # backtracking loop
     i <- 0
@@ -121,7 +122,7 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                   as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                   as.integer(np),as.double(cov2),as.integer(npt),
                   as.double(tfs),as.integer(ndf),as.double(uuu),
-                  as.integer(length(uu)),as.integer(cengroup),as.double(bn),
+                  as.integer(ncg),as.integer(cengroup),as.double(bn),
                   double(1),double(np),PACKAGE = "cmprsk")[[15]]
       if (i>20) break
     }
@@ -135,11 +136,11 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
-                as.integer(length(uu)),as.integer(cengroup),as.double(b),
+                as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(np*np),double(np*np),double(np*np),
                 double(length(ftime)*(np+1)),double(np),double(np),
-                double(2*np),double(np),double(length(uu)*np),
-                integer(length(uu)),PACKAGE = "cmprsk")[15:16]
+                double(2*np),double(np),double(ncg*np),
+                integer(ncg),PACKAGE = "cmprsk")[15:16]
   dim(v[[2]]) <- dim(v[[1]]) <- c(np,np)
   h <- solve(v[[1]])
   v <- h %*% v[[2]] %*% t(h)
@@ -147,13 +148,13 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
-                as.integer(length(uu)),as.integer(cengroup),as.double(b),
+                as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(ndf*np),double(np),double(np),PACKAGE = "cmprsk")[[15]]
   bj <- .Fortran('crrfit',as.double(ftime),as.integer(fstatus),
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
-                as.integer(length(uu)),as.integer(cengroup),as.double(b),
+                as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(ndf),double(np),PACKAGE = "cmprsk")[[15]]
 
   z <- list(coef=b,loglik=-z[[1]],score=-z[[2]],inf=matrix(z[[3]],np,np),var=v,res=t(matrix(r,nrow=np)),uftime=uft,bfitj=bj,tfs=as.matrix(tfs),converged=converge)
@@ -161,68 +162,68 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
   z
 }
 predict.crr <-
-# for a crr object z, estimates subdistributions at covariate
+# for a crr object x, estimates subdistributions at covariate
 # combinations given by rows of cov1 and cov2.  The terms in cov1
 # cov2 must correspond exactly to the corresponding call to crr.
-  function(z,cov1,cov2) {
-    np <- length(z$coef)
-    if (length(z$tfs)<=1) {
-      if (length(z$coef)==length(cov1)) lhat <- cumsum(exp(sum(cov1*z$coef))*z$bfitj)
+  function(object,cov1,cov2,...) {
+    np <- length(object$coef)
+    if (length(object$tfs)<=1) {
+      if (length(object$coef)==length(cov1)) lhat <- cumsum(exp(sum(cov1*object$coef))*object$bfitj)
       else {
         cov1 <- as.matrix(cov1)
-        lhat <- matrix(0,nrow=length(z$uftime),ncol=nrow(cov1))
-        for (j in 1:nrow(cov1)) lhat[,j] <- cumsum(exp(sum(cov1[j,]*z$coef))*z$bfitj)
+        lhat <- matrix(0,nrow=length(object$uftime),ncol=nrow(cov1))
+        for (j in 1:nrow(cov1)) lhat[,j] <- cumsum(exp(sum(cov1[j,]*object$coef))*object$bfitj)
       }
     } else {
-      if (length(z$coef)==ncol(as.matrix(z$tfs))) {
-        if (length(z$coef)==length(cov2))
-          lhat <- cumsum(exp(z$tfs %*% c(cov2*z$coef))*z$bfitj)
+      if (length(object$coef)==ncol(as.matrix(object$tfs))) {
+        if (length(object$coef)==length(cov2))
+          lhat <- cumsum(exp(object$tfs %*% c(cov2*object$coef))*object$bfitj)
         else {
           cov2 <- as.matrix(cov2)
-          lhat <- matrix(0,nrow=length(z$uftime),ncol=nrow(cov1))
+          lhat <- matrix(0,nrow=length(object$uftime),ncol=nrow(cov1))
           for (j in 1:nrow(cov2)) lhat[,j] <-
-            cumsum(exp(z$tfs %*% c(cov2[j,]*z$coef))*z$bfitj)
+            cumsum(exp(object$tfs %*% c(cov2[j,]*object$coef))*object$bfitj)
         }
       } else {
-        if (length(z$coef)==length(cov1)+length(cov2))
-          lhat <- cumsum(exp(sum(cov1*z$coef[1:length(cov1)])+z$tfs %*%
-                             c(cov2*z$coef[(np-length(cov2)+1):np]))*z$bfitj)
+        if (length(object$coef)==length(cov1)+length(cov2))
+          lhat <- cumsum(exp(sum(cov1*object$coef[1:length(cov1)])+object$tfs %*%
+                             c(cov2*object$coef[(np-length(cov2)+1):np]))*object$bfitj)
         else {
           cov1 <- as.matrix(cov1)
           cov2 <- as.matrix(cov2)
-          lhat <- matrix(0,nrow=length(z$uftime),ncol=nrow(cov1))
+          lhat <- matrix(0,nrow=length(object$uftime),ncol=nrow(cov1))
           for (j in 1:nrow(cov1)) lhat[,j] <-
-            cumsum(exp(sum(cov1[j,]*z$coef[1:ncol(cov1)])+z$tfs %*%
-                       c(cov2[j,]*z$coef[(np-ncol(cov2)+1):np]))*z$bfitj)
+            cumsum(exp(sum(cov1[j,]*object$coef[1:ncol(cov1)])+object$tfs %*%
+                       c(cov2[j,]*object$coef[(np-ncol(cov2)+1):np]))*object$bfitj)
         }
       }
     }
-    lhat <- cbind(z$uftime,1-exp(-lhat))
+    lhat <- cbind(object$uftime,1-exp(-lhat))
     class(lhat) <- 'predict.crr'
     lhat
   }
 plot.predict.crr <-
 # plots estimated subdistributions from predict.crr
-  function(z,lty=1:(ncol(z)-1),color=1,ylim=c(0,max(z[,-1])),xmin=0,xmax=max(z[,1]),...) {
-  if (length(lty)<ncol(z)-1) lty <- rep(lty[1],ncol(z)-1)
-  if (length(color)<ncol(z)-1) color <- rep(color[1],ncol(z)-1)
-  if (xmax<max(z[,1])) z <- z[z[,1]<xmax,]
-  times <- c(xmin,rep(z[,1],rep(2,nrow(z))),xmax)
+  function(x,lty=1:(ncol(x)-1),color=1,ylim=c(0,max(x[,-1])),xmin=0,xmax=max(x[,1]),...) {
+  if (length(lty)<ncol(x)-1) lty <- rep(lty[1],ncol(x)-1)
+  if (length(color)<ncol(x)-1) color <- rep(color[1],ncol(x)-1)
+  if (xmax<max(x[,1])) x <- x[x[,1]<xmax,]
+  times <- c(xmin,rep(x[,1],rep(2,nrow(x))),xmax)
   plot(c(xmin,xmax),ylim,type='n',...)
-  for (j in 2:ncol(z)) lines(times,c(0,0,rep(z[,j],rep(2,nrow(z)))),lty=lty[j-1],col=color[j-1])
+  for (j in 2:ncol(x)) lines(times,c(0,0,rep(x[,j],rep(2,nrow(x)))),lty=lty[j-1],col=color[j-1])
 }
 print.crr <-
-# prints a summary of the crr fit z
-  function(z) {
-  cat('convergence: ',z$converged,'\n')
+# prints a summary of the crr fit x
+  function(x,...) {
+  cat('convergence: ',x$converged,'\n')
   cat('coefficients:\n')
-  print(signif(z$coef,4))
-  v <- sqrt(diag(z$var))
+  print(signif(x$coef,4),...)
+  v <- sqrt(diag(x$var))
   cat('standard errors:\n')
-  print(signif(v,4))
-  v <- 2*(1-pnorm(abs(z$coef)/v))
+  print(signif(v,4),...)
+  v <- 2*(1-pnorm(abs(x$coef)/v))
   cat('two-sided p-values:\n')
-  print(signif(v,2))
+  print(signif(v,2),...)
   invisible()
 }
 
@@ -312,21 +313,21 @@ cuminc <- function(ftime,fstatus,group,strata,rho=0,cencode=0,subset,na.action=n
   pf
 }
 
-print.cuminc <- function(z,ntp=4,maxtime) {
-  if (!is.null(z$Tests)) {
+print.cuminc <- function(x,ntp=4,maxtime,...) {
+  if (!is.null(x$Tests)) {
     cat('Tests:\n')
-    print(z$Tests)
-    nc <- length(z)-1
+    print(x$Tests)
+    nc <- length(x)-1
   } else {
-    nc <- length(z)
+    nc <- length(x)
   }
   if (missing(maxtime)) {
     maxtime <- 0
-    for (i in 1:nc) maxtime <- max(maxtime,z[[i]]$time)
+    for (i in 1:nc) maxtime <- max(maxtime,x[[i]]$time)
   }
   tp <- pretty(c(0,maxtime),ntp+1)
   cat('Estimates and Variances:\n')
-  print(timepoints(z,tp[-c(1,length(tp))]))
+  print(timepoints(x,tp[-c(1,length(tp))]),...)
   invisible()
 }
 
@@ -359,36 +360,36 @@ timepoints <- function(w,times) {
   list(est=oute[slct,,drop=FALSE],var=outv[slct,,drop=FALSE])
 }
 
-plot.cuminc <-  function(z,main=" ",curvlab,ylim=c(0,1),xlim,wh=2,xlab="Years",
-ylab="Probability",lty=1:length(z),color=1,...) {
-# z is a list containing curves to be plotted. Each component of
-# z is a list with the first component containing the x values
+plot.cuminc <-  function(x,main=" ",curvlab,ylim=c(0,1),xlim,wh=2,xlab="Years",
+ylab="Probability",lty=1:length(x),color=1,...) {
+# x is a list containing curves to be plotted. Each component of
+# x is a list with the first component containing the x values
 # and the second component the y values.  main = main title in the plot
 # curvlab=curve labels (vector), wh=where curve labels are plotted
 # 1=lower left 2=upper left 3=upper right 4=lower right
-  if (!is.null(z$Tests)) z <- z[names(z) != 'Tests']
-  nc <- length(z)
+  if (!is.null(x$Tests)) x <- x[names(x) != 'Tests']
+  nc <- length(x)
   if (length(lty) < nc) lty <- rep(lty[1],nc) else lty <- lty[1:nc]
   if (length(color) < nc) color <- rep(color[1],nc) else color <- color[1:nc]
   if (missing(curvlab)) {
-    if (mode(names(z))=="NULL") {
+    if (mode(names(x))=="NULL") {
       curvlab <- as.character(1:nc) }
-    else curvlab <- names(z)[1:nc]
+    else curvlab <- names(x)[1:nc]
   }
   if (missing(xlim)) {
     xmax <- 0
     for (i in 1:nc) {
-      xmax <- max(c(xmax,z[[i]][[1]]))
+      xmax <- max(c(xmax,x[[i]][[1]]))
     }
     xlim <- c(0,xmax)
   }
-  plot(z[[1]][[1]],z[[1]][[2]],type="n",ylim=ylim,xlim=xlim,
+  plot(x[[1]][[1]],x[[1]][[2]],type="n",ylim=ylim,xlim=xlim,
        main=main,xlab=xlab,ylab=ylab,bty="l",...)
   if (length(wh) != 2) {
       wh <- c(xlim[1],ylim[2])
   }
   legend(wh[1],wh[2],legend=curvlab,col=color,lty=lty,bty="n",bg=-999999,...)
   for (i in 1:nc) {
-    lines(z[[i]][[1]],z[[i]][[2]],lty=lty[i],col=color[i],...)
+    lines(x[[i]][[1]],x[[i]][[2]],lty=lty[i],col=color[i],...)
   }
 }
