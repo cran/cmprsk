@@ -129,34 +129,11 @@ ftime <- rexp(200)
 fstatus <- sample(0:2,200,replace=TRUE)
 cov <- matrix(runif(600),nrow=200)
 print(z <- crr(ftime,fstatus,cov))
-# convergence:  TRUE 
-# coefficients:
-# [1]  0.8470 -0.3473 -0.6913
-# standard errors:
-# [1] 0.4027 0.4402 0.4916
-# two-sided p-values:
-# [1] 0.035 0.430 0.160
-# for failures of type 2
 z.p <- predict(z,rbind(c(.1,.5,.8),c(.1,.5,.2)))
 plot(z.p,lty=1,color=2:3)
 crr(ftime,fstatus,cov,failcode=2)
-# convergence:  TRUE 
-# coefficients:
-# [1] -0.4638  0.4896  0.2331
-# standard errors:
-# [1] 0.3896 0.4540 0.4256
-# two-sided p-values:
-# [1] 0.23 0.28 0.58
 # quadratic in time for first cov
 crr(ftime,fstatus,cov,cbind(cov[,1],cov[,1]),function(Uft) cbind(Uft,Uft^2))
-# convergence:  TRUE 
-# coefficients:
-# [1]  1.3360 -0.3484 -0.6852 -1.1210  0.3897
-# standard errors:
-# [1] 0.8657 0.4405 0.4909 1.6860 0.6271
-# two-sided p-values:
-# [1] 0.12 0.43 0.16 0.51 0.53
-#last 2 values are the coefs of the cov[,1]*t and cov[,1]*t^2 terms
 #additional examples in test.R
 }
 \keyword{survival}

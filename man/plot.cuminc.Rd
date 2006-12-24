@@ -9,7 +9,7 @@ list input, for example, the output from \code{cuminc()}.
 }
 \usage{
 plot.cuminc(x, main=" ", curvlab, ylim=c(0, 1), xlim, wh=2, xlab="Years", 
-ylab="Probability", lty=1:length(x), color=1, \dots)
+ylab="Probability", lty=1:length(x), color=1, lwd=par('lwd'), \dots)
 }
 \arguments{
 \item{x}{
@@ -53,7 +53,11 @@ used for all.
   vector of colors.  If \code{length(color)<nc}, then the \code{color[1]} is
   used for all.
   }
-\item{...}{
+\item{lwd}{
+  vector of line widths.  If \code{length(lwd)<nc}, then \code{lwd[1]}
+  is used for all.
+  }
+  \item{...}{
 additional arguments passed to the initial call of the plot function.
 }}
 \value{

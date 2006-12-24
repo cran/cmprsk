@@ -360,7 +360,7 @@ timepoints <- function(w,times) {
 }
 
 plot.cuminc <-  function(x,main=" ",curvlab,ylim=c(0,1),xlim,wh=2,xlab="Years",
-ylab="Probability",lty=1:length(x),color=1,...) {
+ylab="Probability",lty=1:length(x),color=1,lwd = par('lwd'),...) {
 # x is a list containing curves to be plotted. Each component of
 # x is a list with the first component containing the x values
 # and the second component the y values.  main = main title in the plot
@@ -369,6 +369,7 @@ ylab="Probability",lty=1:length(x),color=1,...) {
   if (!is.null(x$Tests)) x <- x[names(x) != 'Tests']
   nc <- length(x)
   if (length(lty) < nc) lty <- rep(lty[1],nc) else lty <- lty[1:nc]
+  if (length(lwd) < nc) lwd <- rep(lwd[1],nc) else lwd <- lwd[1:nc]
   if (length(color) < nc) color <- rep(color[1],nc) else color <- color[1:nc]
   if (missing(curvlab)) {
     if (mode(names(x))=="NULL") {
@@ -387,8 +388,15 @@ ylab="Probability",lty=1:length(x),color=1,...) {
   if (length(wh) != 2) {
       wh <- c(xlim[1],ylim[2])
   }
-  legend(wh[1],wh[2],legend=curvlab,col=color,lty=lty,bty="n",bg=-999999,...)
+  u <- list(...)
+  if (length(u)>0) {
+    i <- pmatch(names(u),names(formals(legend)),0)
+    do.call('legend',c(list(x=wh[1],y=wh[2],legend=curvlab,col=color,lty=lty,lwd=lwd,bty="n",bg=-999999),u[i>0]))
+  } else {
+    do.call('legend',list(x=wh[1],y=wh[2],legend=curvlab,col=color,lty=lty,lwd=lwd,bty="n",bg=-999999))
+  }
+#  legend(wh[1],wh[2],legend=curvlab,col=color,lty=lty,bty="n",bg=-999999,...)
   for (i in 1:nc) {
-    lines(x[[i]][[1]],x[[i]][[2]],lty=lty[i],col=color[i],...)
+    lines(x[[i]][[1]],x[[i]][[2]],lty=lty[i],col=color[i],lwd=lwd[i],...)
   }
 }
