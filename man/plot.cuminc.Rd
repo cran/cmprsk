@@ -8,8 +8,9 @@ Plot method for cuminc.  Creates labeled line plots from appropriate
 list input, for example, the output from \code{cuminc()}.
 }
 \usage{
-plot.cuminc(x, main=" ", curvlab, ylim=c(0, 1), xlim, wh=2, xlab="Years", 
-ylab="Probability", lty=1:length(x), color=1, lwd=par('lwd'), \dots)
+\method{plot}{cuminc}(x, main=" ", curvlab, ylim=c(0, 1), xlim, wh=2, 
+xlab="Years",  ylab="Probability", lty=1:length(x), color=1, lwd=par('lwd'), 
+\dots)
 }
 \arguments{
 \item{x}{

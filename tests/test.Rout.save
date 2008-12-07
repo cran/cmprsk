@@ -1,17 +1,19 @@
 
-R : Copyright 2003, The R Development Core Team
-Version 1.7.1  (2003-06-16)
+R version 2.6.1 (2007-11-26)
+Copyright (C) 2007 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
-Type `license()' or `licence()' for distribution details.
+Type 'license()' or 'licence()' for distribution details.
 
 R is a collaborative project with many contributors.
-Type `contributors()' for more information.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
 
-Type `demo()' for some demos, `help()' for on-line help, or
-`help.start()' for a HTML browser interface to help.
-Type `q()' to quit R.
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
 
 > library(cmprsk)
 > u <- R.Version()
@@ -245,22 +247,26 @@ c 2 0.006497566 0.007867543 0.007867543         NA         NA
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1] -0.29130 -0.06346 -0.47510
+     cv1      cv2      cv3 
+-0.29130 -0.06346 -0.47510 
 standard errors:
 [1] 0.3698 0.3566 0.3544
 two-sided p-values:
-[1] 0.43 0.86 0.18
+ cv1  cv2  cv3 
+0.43 0.86 0.18 
 > cov2 <- cbind(cv[,1],cv[,1])
 > tf <- function(uft) cbind(uft,uft^2)
 > print(ww <- crr(ss,cc,cv,cov2,tf=tf,cengroup=cv[,3]))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1]  0.02944 -0.06263 -0.42160 -0.84780  0.29850
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+  0.02944  -0.06263  -0.42160  -0.84780   0.29850 
 standard errors:
 [1] 0.8022 0.3587 0.3616 1.3070 0.4018
 two-sided p-values:
-[1] 0.97 0.86 0.24 0.52 0.46
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+     0.97      0.86      0.24      0.52      0.46 
 > plot(ww$uft,ww$res[,1])
 > lines(lowess(ww$uft,ww$res[,1],iter=0,f=.75))
 > print(wp <- predict(ww,rbind(c(1,1,1),c(0,0,0)),rbind(c(1,1),c(0,0))))
@@ -306,82 +312,156 @@ attr(,"class")
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1]  0.02944 -0.06263 -0.42160 -0.84780  0.29850
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+               0.02944               -0.06263               -0.42160 
+             cov21*uft              cov22*tf2 
+              -0.84780                0.29850 
 standard errors:
 [1] 0.8022 0.3587 0.3616 1.3070 0.4018
 two-sided p-values:
-[1] 0.97 0.86 0.24 0.52 0.46
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+                  0.97                   0.86                   0.24 
+             cov21*uft              cov22*tf2 
+                  0.52                   0.46 
 > print(ww <- crr(ssd,ccd,cbind(cv[,1:2],cv3),cov2,tf=tf))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1]  0.03695 -0.05995 -0.46280 -0.89860  0.32020
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+               0.03695               -0.05995               -0.46280 
+             cov21*uft              cov22*tf2 
+              -0.89860                0.32020 
 standard errors:
 [1] 0.7862 0.3579 0.3538 1.2180 0.3547
 two-sided p-values:
-[1] 0.96 0.87 0.19 0.46 0.37
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+                  0.96                   0.87                   0.19 
+             cov21*uft              cov22*tf2 
+                  0.46                   0.37 
 > print(ww <- crr(ssd,ccd,cbind(cv[,1:2],cv3),cbind(cv1,cv1),tf=tf,cengroup=cv3))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1]  0.02944 -0.06263 -0.42160 -0.84780  0.29850
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+               0.02944               -0.06263               -0.42160 
+               cv1*uft                cv1*tf2 
+              -0.84780                0.29850 
 standard errors:
 [1] 0.8022 0.3587 0.3616 1.3070 0.4018
 two-sided p-values:
-[1] 0.97 0.86 0.24 0.52 0.46
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+                  0.97                   0.86                   0.24 
+               cv1*uft                cv1*tf2 
+                  0.52                   0.46 
 > print(ww <- crr(ssd,ccd,cbind(cv[,1:2],cv3),cbind(cv1,cv1),tf=tf,cengroup=cv3,subset=X == 1))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1]  0.9918  0.1967 -0.2967 -1.8020  0.4035
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+                0.9918                 0.1967                -0.2967 
+               cv1*uft                cv1*tf2 
+               -1.8020                 0.4035 
 standard errors:
 [1] 1.0320 0.4345 0.4527 1.3730 0.3022
 two-sided p-values:
-[1] 0.34 0.65 0.51 0.19 0.18
+cbind(cv[, 1:2], cv3)1 cbind(cv[, 1:2], cv3)2                    cv3 
+                  0.34                   0.65                   0.51 
+               cv1*uft                cv1*tf2 
+                  0.19                   0.18 
+> print(summary(ww))
+Competing Risks Regression
+
+Call:
+crr(ftime = ssd, fstatus = ccd, cov1 = cbind(cv[, 1:2], cv3), 
+    cov2 = cbind(cv1, cv1), tf = tf, cengroup = cv3, subset = X == 
+        1)
+
+                         coef exp(coef) se(coef)      z p-value
+cbind(cv[, 1:2], cv3)1  0.992     2.696    1.032  0.961    0.34
+cbind(cv[, 1:2], cv3)2  0.197     1.217    0.435  0.453    0.65
+cv3                    -0.297     0.743    0.453 -0.656    0.51
+cv1*uft                -1.802     0.165    1.373 -1.313    0.19
+cv1*tf2                 0.403     1.497    0.302  1.335    0.18
+
+                       exp(coef) exp(-coef)   2.5% 97.5%
+cbind(cv[, 1:2], cv3)1     2.696      0.371 0.3567 20.38
+cbind(cv[, 1:2], cv3)2     1.217      0.821 0.5195  2.85
+cv3                        0.743      1.345 0.3061  1.80
+cv1*uft                    0.165      6.064 0.0112  2.43
+cv1*tf2                    1.497      0.668 0.8279  2.71
+
+Num. cases = 77 (3 cases omitted due to missing values)
+Pseudo Log-likelihood = -79.2 
+Pseudo likelihood ratio test = 2.53  on 5 df,
 > detach(d2)
 > print(ww <- crr(ss,cc,cv,cov2,tf=tf,cengroup=cv[,3],subset=d2$X==1))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1]  0.9918  0.1967 -0.2967 -1.8020  0.4035
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+   0.9918    0.1967   -0.2967   -1.8020    0.4035 
 standard errors:
 [1] 1.0320 0.4345 0.4527 1.3730 0.3022
 two-sided p-values:
-[1] 0.34 0.65 0.51 0.19 0.18
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+     0.34      0.65      0.51      0.19      0.18 
 > print(ww <- crr(ss,cc,cv,cov2,tf=tf,cengroup=cv[,3],failcode=2))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1] -0.05102 -0.43670  0.38270  0.93320 -0.41840
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+ -0.05102  -0.43670   0.38270   0.93320  -0.41840 
 standard errors:
 [1] 0.7223 0.3383 0.3742 1.2540 0.4086
 two-sided p-values:
-[1] 0.94 0.20 0.31 0.46 0.31
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+     0.94      0.20      0.31      0.46      0.31 
 > print(ww <- crr(ss,cc,cv,cov2,tf=tf,cengroup=cv[,3],cencode=2))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1]  0.06643 -0.16260 -0.19010 -0.86200  0.32170
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+  0.06643  -0.16260  -0.19010  -0.86200   0.32170 
 standard errors:
 [1] 0.7969 0.3493 0.3801 1.4140 0.4550
 two-sided p-values:
-[1] 0.93 0.64 0.62 0.54 0.48
+      cv1       cv2       cv3 cov21*uft cov22*tf2 
+     0.93      0.64      0.62      0.54      0.48 
 > print(ww <- crr(ss,cc,cv[,1]))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1] -0.1753
+cv[, 1]1 
+ -0.1753 
 standard errors:
 [1] 0.354
 two-sided p-values:
-[1] 0.62
+cv[, 1]1 
+    0.62 
 > print(ww <- crr(ss,cc,cov2=cv[,1],tf=function(x) x))
 3 cases omitted due to missing values
 convergence:  TRUE 
 coefficients:
-[1] 0.007688
+cv[, 1]1*tf1 
+    0.007688 
 standard errors:
 [1] 0.2191
 two-sided p-values:
-[1] 0.97
+cv[, 1]1*tf1 
+        0.97 
+> print(summary(ww))
+Competing Risks Regression
+
+Call:
+crr(ftime = ss, fstatus = cc, cov2 = cv[, 1], tf = function(x) x)
+
+                coef exp(coef) se(coef)      z p-value
+cv[, 1]1*tf1 0.00769      1.01    0.219 0.0351    0.97
+
+             exp(coef) exp(-coef)  2.5% 97.5%
+cv[, 1]1*tf1      1.01      0.992 0.656  1.55
+
+Num. cases = 97 (3 cases omitted due to missing values)
+Pseudo Log-likelihood = -125 
+Pseudo likelihood ratio test = 0  on 1 df,
 > 

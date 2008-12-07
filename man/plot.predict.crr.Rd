@@ -7,8 +7,8 @@ Plot estimated subdistribution functions
 plot method for \code{predict.crr}
 }
 \usage{
-plot.predict.crr(x, lty=1:(ncol(x)-1), color=1,  ylim=c(0, max(x[, -1])),
-xmin=0, xmax=max(x[, 1]), \dots)
+\method{plot}{predict.crr}(x, lty=1:(ncol(x)-1), color=1,  
+ylim=c(0, max(x[, -1])), xmin=0, xmax=max(x[, 1]), \dots)
 }
 \arguments{
 \item{x}{

@@ -68,8 +68,8 @@ scores and var at \code{init}, but performs no iterations)
 \value{
   Returns a list of class crr, with components
   \item{$coef}{the estimated regression coefficients}
-  \item{$loglik}{log pseudo-liklihood evaluated at coef}
-\item{$score}{derivitives of the log pseudo-likelihood evaluated at coef}
+  \item{$loglik}{log pseudo-liklihood evaluated at \code{coef}}
+\item{$score}{derivitives of the log pseudo-likelihood evaluated at \code{coef}}
 \item{$inf}{-second derivatives of the log pseudo-likelihood}
 \item{$var}{estimated variance covariance matrix of coef}
 \item{$res}{matrix of residuals giving the
@@ -79,7 +79,13 @@ contribution to each score (columns) at each unique failure time
 \item{$bfitj}{jumps in the Breslow-type estimate of the underlying
   sub-distribution cumulative hazard (used by predict.crr())}
 \item{$tfs}{the tfs matrix (output of tf(), if used)}
-\item{$converged}{TRUE if the iterative algorithm converged.}
+\item{$converged}{TRUE if the iterative algorithm converged}
+\item{$call}{The call to crr}
+\item{$n}{The number of observations used in fitting the model}
+\item{$n.missing}{The number of observations removed from the input data
+  due to missing values}
+\item{$loglik.null}{The value of the log pseudo-likelihood when all the
+  coefficients are 0}
 }
 \details{
 Fits the 'proportional subdistribution hazards' regression model
@@ -87,6 +93,14 @@ described in Fine and Gray (1999).  This model directly assesses the
 effect of covariates on the subdistribution of a particular type of
 failure in a competing risks setting.  The method implemented here is
 described in the paper as the weighted estimating equation.
+
+While the use of model formulas is not supported, the
+\code{model.matrix} function can be used to generate suitable matrices
+of covariates from factors, eg
+\code{model.matrix(~factor1+factor2)[,-1]} will generate the variables
+for the factor coding of the factors \code{factor1} and \code{factor2}.
+The final \code{[,-1]} removes the constant term from the output of
+\code{model.matrix}.
 
 The basic model assumes the subdistribution with covariates z is a
 constant shift on the complementary log log scale from a baseline
@@ -121,6 +135,7 @@ subdistribution of a competing risk.  JASA 94:496-509.
 }
 \seealso{
 \code{\link{predict.crr}} \code{\link{print.crr}} \code{\link{plot.predict.crr}}
+\code{\link{summary.crr}}
 }
 \examples{
 # simulated data to test 
@@ -128,7 +143,9 @@ set.seed(10)
 ftime <- rexp(200)
 fstatus <- sample(0:2,200,replace=TRUE)
 cov <- matrix(runif(600),nrow=200)
+dimnames(cov)[[2]] <- c('x1','x2','x3')
 print(z <- crr(ftime,fstatus,cov))
+summary(z)
 z.p <- predict(z,rbind(c(.1,.5,.8),c(.1,.5,.2)))
 plot(z.p,lty=1,color=2:3)
 crr(ftime,fstatus,cov,failcode=2)

@@ -29,6 +29,16 @@ crr <-
 #  init = initial values of regression parameters
 function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
          subset,na.action=na.omit,gtol=1e-6,maxiter=10,init) {
+  ## LS
+  call <- match.call() 
+  cov1.name <- deparse(substitute(cov1))
+  cov1.vars <- cov2.vars <- NULL
+  if(!missing(cov1)) 
+    { cov1.vars <- colnames(as.matrix(cov1)) }
+  cov2.name <- deparse(substitute(cov2))
+  if(!missing(cov2)) 
+    { cov2.vars <- colnames(as.matrix(cov2)) }
+  ##
   d <- data.frame(ftime=ftime,fstatus=fstatus,
         cengroup=if (missing(cengroup)) rep(1,length(fstatus)) else cengroup)
   if (!missing(cov1)) {
@@ -44,7 +54,11 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
   if (!missing(subset)) d <- d[subset,]
   tmp <- nrow(d)
   d <- na.action(d)
-  if (nrow(d) != tmp) cat(format(tmp-nrow(d)),'cases omitted due to missing values\n')
+  nmis <- 0
+  if (nrow(d) != tmp) {
+    nmis <- tmp-nrow(d)
+    cat(format(nmis),'cases omitted due to missing values\n')
+  }
   d <- d[order(d$ftime),]
   ftime <- d$ftime
   cenind <- ifelse(d$fstatus==cencode,1,0)
@@ -155,11 +169,103 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                 as.double(tfs),as.integer(ndf),as.double(uuu),
                 as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(ndf),double(np),PACKAGE = "cmprsk")[[15]]
-
-  z <- list(coef=b,loglik=-z[[1]],score=-z[[2]],inf=matrix(z[[3]],np,np),var=v,res=t(matrix(r,nrow=np)),uftime=uft,bfitj=bj,tfs=as.matrix(tfs),converged=converge)
+##
+  nobs <- length(ftime)
+  b0 <- rep(0,length(b))
+  fb0 <- .Fortran('crrf',as.double(ftime),as.integer(fstatus),
+                  as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
+                  as.integer(np),as.double(cov2),as.integer(npt),
+                  as.double(tfs),as.integer(ndf),as.double(uuu),
+                  as.integer(ncg),as.integer(cengroup),as.double(b0),
+                  double(1),double(np),PACKAGE = "cmprsk")[[15]]
+  if (nc1>0) {
+    x1 <- paste(cov1.name, 1:nc1, sep="")
+    if(is.null(cov1.vars)) cov1.vars <- x1
+    else cov1.vars <- ifelse(cov1.vars=="",x1,cov1.vars)
+  }
+  if(nc2 > 0) { 
+    x1 <- paste(cov2.name, 1:nc2, sep="")
+    if (is.null(cov2.vars)) cov2.vars <- x1
+    else cov2.vars <- ifelse(cov2.vars=="",x1,cov2.vars)
+    x1 <- paste('tf',1:nc2,sep='')
+    x2 <- colnames(tfs)
+    if (!is.null(x2)) x1 <- ifelse(x2=="",x1,x2)
+    cov2.vars <- paste(cov2.vars, x1, sep="*")
+  }
+  names(b) <- c(cov1.vars, cov2.vars)
+    ##
+  z <- list(coef=b,loglik=-z[[1]],score=-z[[2]],inf=matrix(z[[3]],np,np),
+            var=v,res=t(matrix(r,nrow=np)),uftime=uft,bfitj=bj,
+            tfs=as.matrix(tfs),converged=converge,call = call, n = nobs, 
+            n.missing = nmis, loglik.null = -fb0)
   class(z) <- 'crr'
   z
 }
+
+"summary.crr" <- function(object, conf.int = 0.95, digits = max(options()$digits - 5, 2), ...) 
+{
+  beta <- object$coef
+  se <- sqrt(diag(object$var))
+  out <- list(call = object$call, converged = object$converged, 
+              n = object$n, n.missing = object$n.missing, 
+              loglik = object$loglik)
+  tmp <- cbind(beta, exp(beta), se, beta/se, 
+               signif(2 * (1 - pnorm(abs(beta)/se)), digits))
+  dimnames(tmp) <- list(names(beta), c("coef", "exp(coef)", 
+                        "se(coef)", "z", "p-value"))
+  out$coef <- tmp
+  if(conf.int) 
+    { a <- (1 - conf.int)/2
+      a <- c(a, 1 - a)
+      z <- qnorm(a)
+      tmp <- cbind(exp(beta), exp(-beta), 
+                   exp(beta + z[1] * se), exp(beta + z[2] * se))
+      dimnames(tmp) <- list(names(beta), c("exp(coef)", "exp(-coef)", 
+                            paste(format(100*a, trim = TRUE, 
+                                         scientific = FALSE, 
+                                         digits = 3), "%", sep="")))
+      out$conf.int <- tmp
+  }
+  df <- length(beta)
+  logtest <- -2 * (object$loglik.null - object$loglik)
+  out$logtest <- c(test = logtest, df = df)
+  # out$rsq <- c(rsq = 1 - exp(-logtest/object$n), 
+  #              maxrsq = 1 - exp(2 * object$loglik.null/object$n))
+  class(out) <- "summary.crr"
+  out
+}
+
+"print.summary.crr" <- function (x, digits = max(options()$digits - 4, 3), ...) 
+{
+    cat("Competing Risks Regression\n\n")
+    if(!is.null(x$call)) 
+      { cat("Call:\n")
+        dput(x$call)
+        cat("\n") 
+      }
+    if(!x$converged) 
+      { cat("crr converged:", x$converged, "\n")
+        return()
+      }
+    savedig <- options(digits = digits)
+    on.exit(options(savedig))
+    print(x$coef)
+    cat("\n")
+    print(x$conf.int)
+    cat("\n")
+    cat("Num. cases =", x$n)
+    if(x$n.missing > 0) 
+      cat(" (", x$n.missing, " cases omitted due to missing values)", sep="")
+    cat("\n")
+    # cat("Rsquare =", format(round(x$rsq["rsq"], 3)), "  (max possible =", 
+    #    format(round(x$rsq["maxrsq"], 3)), ")\n")
+    cat("Pseudo Log-likelihood =", x$loglik, "\n")
+    cat("Pseudo likelihood ratio test = ", format(round(x$logtest["test"], 2)), 
+        "  on ", x$logtest["df"], " df,",  "\n", sep = "")
+#        "  p-value = ", format(x$logtest["pvalue"]), "\n", sep = "")
+    invisible()
+}
+
 predict.crr <-
 # for a crr object x, estimates subdistributions at covariate
 # combinations given by rows of cov1 and cov2.  The terms in cov1

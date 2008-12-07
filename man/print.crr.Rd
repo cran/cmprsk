@@ -7,7 +7,7 @@ prints summary of a crr object
 print method for crr objects
 }
 \usage{
-print.crr(x, \dots)
+\method{print}{crr}(x, \dots)
 }
 \arguments{
 \item{x}{

@@ -5,7 +5,7 @@
 A print method for objects of class cuminc (output from \code{cuminc()}).
 }
 \usage{
-print.cuminc(x, ntp=4, maxtime, \dots)
+\method{print}{cuminc}(x, ntp=4, maxtime, \dots)
 }
 \arguments{
  \item{x}{an object of class cuminc}

@@ -7,7 +7,7 @@ Estimate subdistribution functions from crr output
 predict method for crr
 }
 \usage{
-predict.crr(object, cov1, cov2, \dots)
+\method{predict}{crr}(object, cov1, cov2, \dots)
 }
 \arguments{
 \item{object}{
