@@ -45,30 +45,23 @@ value of fstatus variable which indicates the failure time is censored.
 }
 \value{
 A list with components giving the subdistribution estimates for each
-cause in each group, and a component giving the test results (if the
-number of groups is >1).  The components giving the estimates have names
-that are a combination 
-of the group name and the cause code.  The estimate for each group and
-cause combination is also a list.
-\item{$<groupcause>}{
-\item{\code{$<groupcause>$time}}{ the times
+cause in each group, and a component \code{Tests} giving the test
+statistics and p-values for comparing the subdistribution for each cause
+across groups (if the 
+number of groups is \eqn{>}{>}1).  The components giving the estimates
+have names that are a combination 
+of the group name and the cause code.  
+These components are also lists, with components
+\item{\code{time}}{ the times
 where the estimates are calculated}
-\item{\code{$<groupcause>$est}}{the estimated
+\item{\code{est}}{the estimated
 sub-distribution functions.  These are step functions (all corners
 of the steps given), so they can be plotted using ordinary lines() commands.
 Estimates at particular times can be located using the timepoints()
 function.}
-\item{\code{$<groupcause>$var}}{the estimated variance of
+\item{\code{var}}{the estimated variance of
   the estimates, which are estimates of the asymptotic
   variance of Aalen (1978).  }
-}
-
-\item{$Tests}{
-  If the number of groups is \eqn{>}{>}1, there is also a component at
-  the top level giving the test
-statistics and p-values for comparing the subdistribution for each
-cause across groups.  The test statistics are described in Gray (1988).
-}
 }
 \references{
 Gray RJ (1988) A class of K-sample tests for comparing the cumulative
