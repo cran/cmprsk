@@ -385,7 +385,7 @@ c to the d lambda c hat portion at the ith censoring time.
                if (t2(j).gt.t2(i)) go to 39
                if (ici(j).eq.0) then
                   do 282 k=1,np
-                     ss2(k,icg(j))=ss2(k,icg(k))-qu(k)/icrsk(icg(j))**2
+                     ss2(k,icg(j))=ss2(k,icg(j))-qu(k)/icrsk(icg(j))**2
  282              continue 
                endif
  43         continue 
