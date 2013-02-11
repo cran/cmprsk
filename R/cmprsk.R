@@ -28,7 +28,7 @@ crr <-
 #     scores and var at init, but performs no iterations)
 #  init = initial values of regression parameters
 function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
-         subset,na.action=na.omit,gtol=1e-6,maxiter=10,init) {
+         subset,na.action=na.omit,gtol=1e-6,maxiter=10,init,variance=TRUE) {
   ## LS
   call <- match.call() 
   cov1.name <- deparse(substitute(cov1))
@@ -68,10 +68,14 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
   ncg <- length(ucg)
   uuu <- matrix(0,nrow=ncg,ncol=length(ftime))
   for (k in 1:ncg) {
-    u <- do.call('survfit',list(formula=Surv(ftime,cenind)~1,data=data.frame(ftime,cenind,cengroup),subset=cengroup==k))
+    u <- do.call('survfit',list(formula=Surv(ftime,cenind)~1,data=
+       data.frame(ftime,cenind,cengroup),subset=cengroup==k))
 ### note: want censring dist km at ftime-
-    u <- summary(u,times=sort(ftime*(1-.Machine$double.eps)))
-    uuu[k,1:length(u$surv)] <- u$surv
+    u <- approx(c(0,u$time,max(u$time)*(1+10*.Machine$double.eps)),c(1,u$surv,
+       0),xout=ftime*(1-100*.Machine$double.eps),method='constant',f=0,rule=2)
+    uuu[k,1:length(u$y)] <- u$y
+#    u <- summary(u,times=sort(ftime*(1-.Machine$double.eps)))
+#    uuu[k,1:length(u$surv)] <- u$surv
   }
   uft <- sort(unique(ftime[fstatus==1]))
   ndf <- length(uft)
@@ -145,31 +149,40 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
     }
     b <- c(bn)
   }
-  v <- .Fortran('crrvv',as.double(ftime),as.integer(fstatus),
+  if (variance) {
+    v <- .Fortran('crrvv',as.double(ftime),as.integer(fstatus),
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
                 as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(np*np),double(np*np),double(np*np),
-                double(length(ftime)*(np+1)),double(np),double(np),
-                double(2*np),double(np),double(ncg*np),
-                integer(ncg),PACKAGE = "cmprsk")[15:16]
-  dim(v[[2]]) <- dim(v[[1]]) <- c(np,np)
-  h <- solve(v[[1]])
-  v <- h %*% v[[2]] %*% t(h)
-  r <- .Fortran('crrsr',as.double(ftime),as.integer(fstatus),
+                double(length(ftime)*(np+1)),double(np),double(np*ncg),
+                double(2*np),double(ncg*np),
+                integer(ncg),double(ncg*np),double(ncg),
+                PACKAGE = "cmprsk")[15:16]
+    dim(v[[2]]) <- dim(v[[1]]) <- c(np,np)
+    h0 <- v[[1]]
+    h <- solve(v[[1]])
+    v <- h %*% v[[2]] %*% t(h)
+    r <- .Fortran('crrsr',as.double(ftime),as.integer(fstatus),
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
                 as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(ndf*np),double(np),double(np),PACKAGE = "cmprsk")[[15]]
-  bj <- .Fortran('crrfit',as.double(ftime),as.integer(fstatus),
+    r <- t(matrix(r,nrow=np))
+    bj <- .Fortran('crrfit',as.double(ftime),as.integer(fstatus),
                 as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
                 as.integer(np),as.double(cov2),as.integer(npt),
                 as.double(tfs),as.integer(ndf),as.double(uuu),
                 as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(ndf),double(np),PACKAGE = "cmprsk")[[15]]
 ##
+  } else {
+    v <- h <- h0 <- matrix(NA,np,np)
+    r <- NULL
+    bj <- NULL
+  }
   nobs <- length(ftime)
   b0 <- rep(0,length(b))
   fb0 <- .Fortran('crrf',as.double(ftime),as.integer(fstatus),
@@ -194,10 +207,10 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
   }
   names(b) <- c(cov1.vars, cov2.vars)
     ##
-  z <- list(coef=b,loglik=-z[[1]],score=-z[[2]],inf=matrix(z[[3]],np,np),
-            var=v,res=t(matrix(r,nrow=np)),uftime=uft,bfitj=bj,
+  z <- list(coef=b,loglik=-z[[1]],score=-z[[2]],inf=h0,
+            var=v,res=r,uftime=uft,bfitj=bj,
             tfs=as.matrix(tfs),converged=converge,call = call, n = nobs, 
-            n.missing = nmis, loglik.null = -fb0)
+            n.missing = nmis, loglik.null = -fb0,invinf=h)
   class(z) <- 'crr'
   z
 }
@@ -271,6 +284,7 @@ predict.crr <-
 # combinations given by rows of cov1 and cov2.  The terms in cov1
 # cov2 must correspond exactly to the corresponding call to crr.
   function(object,cov1,cov2,...) {
+    if (is.null(object$bfitj)) stop('predict requires variance=TRUE in crr')
     np <- length(object$coef)
     if (length(object$tfs)<=1) {
       if (length(object$coef)==length(cov1)) lhat <- cumsum(exp(sum(cov1*object$coef))*object$bfitj)

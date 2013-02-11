@@ -8,7 +8,7 @@ regression modeling of subdistribution functions in competing risks
 }
 \usage{
 crr(ftime, fstatus, cov1, cov2, tf, cengroup, failcode=1, cencode=0,
-subset, na.action=na.omit, gtol=1e-06, maxiter=10, init)
+subset, na.action=na.omit, gtol=1e-06, maxiter=10, init, variance=TRUE)
 }
 \arguments{
 \item{ftime}{
@@ -64,6 +64,10 @@ scores and var at \code{init}, but performs no iterations)
 \item{init}{
   initial values of regression parameters (default=all 0)
 }
+\item{variance}{
+  If \code{FALSE}, then suppresses computation of the variance estimate,
+  residuals and underlying hazard 
+}
 }
 \value{
   Returns a list of class crr, with components
@@ -86,6 +90,7 @@ contribution to each score (columns) at each unique failure time
   due to missing values}
 \item{$loglik.null}{The value of the log pseudo-likelihood when all the
   coefficients are 0}
+\item{$invinf}{- inverse of second derivative matrix of the log pseudo-likelihood}
 }
 \details{
 Fits the 'proportional subdistribution hazards' regression model
@@ -128,6 +133,12 @@ The residuals returned are analogous to the Schoenfeld residuals in
 ordinary survival models.  Plotting the jth column of res against the
 vector of unique failure times checks for lack of fit over time in the
 corresponding covariate (column of cov1).
+
+If \code{variance=FALSE}, then \code{predict.crr} cannot be used and
+some of the functionality in \code{summary.crr} and \code{print.crr}
+will be lost.  This option can be useful in situations where crr is
+called repeatedly for point estimates, but standard errors are not
+required, such as in some approaches to stepwise model selection.
 }
 \references{
 Fine JP and Gray RJ (1999) A proportional hazards model for the

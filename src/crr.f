@@ -195,7 +195,7 @@ c calculate sums over risk set
       end
 
       subroutine crrvv(t2,ici,n,x,ncov,np,x2,ncov2,tf,ndf,wt,ncg,icg,b,
-     $     v,v2,vt,xb,xbt,qu,st,ss,ss2,icrsk) 
+     $     v,v2,vt,xb,xbt,qu,st,ss2,icrsk,ss3,ss4) 
 c all data sorted with t2 in ascending order
 c t2, event/censoring time for each subject
 c ici, ici(i)=1 if t2(i)  is a type 1 failure time (& =2 for other failures)
@@ -212,7 +212,8 @@ c xb,xbt,vt,ss,st,qu,icrsk are temporary storage
       double precision t2(n),b(np),v(np,np),tf(ndf,ncov2)
       double precision xb(n,0:np),vt(np,np),wt(ncg,n),cft
       double precision x(n,ncov),x2(n,ncov2),wk,twt,xbt(np),ss2(np,ncg)
-      double precision st(np,2),v2(np,np),ss(np,1),ss0,cft2,qu(np)
+      double precision st(np,2),v2(np,np),cft2,qu(np,ncg)
+      double precision ss3(np,ncg),ss4(ncg)
       integer ici(n),icg(n),n,np,i,j,ncov,ncov2,ncg,ndf,ldf,k
       integer lc,icrsk(ncg),j1,j2,ldf2
       do 3 i=1,ncg
@@ -342,9 +343,11 @@ c         call dblepr('st1',3,st(1,1),np)
 c calculate qu (q(u))
  38         ldf=ldf2
             cft=cft2
-            do 281 k=1,np
-               qu(k)=0
- 281        continue 
+            do 280 k2=1,ncg
+               do 281 k=1,np
+                  qu(k,k2)=0
+ 281           continue 
+ 280        continue
 c j1 indexes inner integral in q (t2(i) is lower limit of integration)
 c dN_j2 part is 0, because integrand includes I(s>t2(j2)), where s is var
 c of integration, so the sum over j1 is calculating the d lambda_1 hat part
@@ -354,10 +357,12 @@ c of integration, so the sum over j1 is calculating the d lambda_1 hat part
                   cft=t2(j1)
                   ldf=ldf+1
                endif
-               ss0=0
-               do 255 k=1,np
-                  ss(k,1)=0
- 255           continue 
+               do 555 k3=1,ncg
+                  ss4(k3)=0
+                  do 255 k=1,np
+                     ss3(k,k3)=0
+ 255              continue 
+ 555           continue
 c j2 indexes outer sum in q.  because of I(s>t2(j2)) and 
 c  I(t2(j2)>=s)+I(t2(j2)<s,eps_j2=2), only type 2 failures contribute
                do 541 j2=1,n
@@ -366,15 +371,15 @@ c  I(t2(j2)>=s)+I(t2(j2)<s,eps_j2=2), only type 2 failures contribute
                   call covt(ncov,x(j2,1),n,ncov2,x2(j2,1),
      $                 tf(ldf,1),ndf,b,wk,xbt)
                   twt=exp(wk)*wt(icg(j2),j1)/wt(icg(j2),j2)
-                  ss0=ss0+twt
+                  ss4(icg(j2))=ss4(icg(j2))+twt
                   do 256 k=1,np
-                     ss(k,1)=ss(k,1)+xbt(k)*twt
+                     ss3(k,icg(j2))=ss3(k,icg(j2))+xbt(k)*twt
  256              continue 
  541           continue 
 c qu is q(t2(i))
  542           do 42 k=1,np
-                  qu(k)=qu(k)+(ss(k,1)-xb(j1,k)*ss0/xb(j1,0))/
-     $                 xb(j1,0)
+                  qu(k,icg(j1))=qu(k,icg(j1))+(ss3(k,icg(j1))-xb(j1,k)*
+     $                 ss4(icg(j1))/xb(j1,0))/xb(j1,0)
  42            continue
  41         continue
 c            call dblepr('qu',2,qu(1),1)
@@ -385,7 +390,8 @@ c to the d lambda c hat portion at the ith censoring time.
                if (t2(j).gt.t2(i)) go to 39
                if (ici(j).eq.0) then
                   do 282 k=1,np
-                     ss2(k,icg(j))=ss2(k,icg(j))-qu(k)/icrsk(icg(j))**2
+                     ss2(k,icg(j))=ss2(k,icg(j))-qu(k,icg(j))/
+     $                    icrsk(icg(j))**2
  282              continue 
                endif
  43         continue 
@@ -397,7 +403,7 @@ c st(,2) is psi
 c dNc portion of psi
          if (ici(i).eq.0) then
             do 45 k=1,np
-               st(k,2)=st(k,2)+qu(k)/icrsk(icg(i))
+               st(k,2)=st(k,2)+qu(k,icg(i))/icrsk(icg(i))
  45         continue 
          endif
          do 271 j1=np,1,-1
