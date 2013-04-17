@@ -33,9 +33,10 @@ c    s gives the scores for the first ng-1 groups, and
 c    vs the estimated variance covariance matrix of these scores
 c
       implicit double precision (a-h,o-z)
-      dimension y(no),m(no),ig(no),ist(no),ys(1),ms(1)
+      dimension y(no),m(no),ig(no),ist(no),ys(no),ms(no)
       dimension wk(ng*(4+3*ng)),iwk(4*ng)
-      dimension igs(1),s(ng-1),v(1),st(ng-1),vt(1),vs(ng-1,ng-1)
+      dimension igs(no),s(ng-1),v(ng*(ng-1)/2),st(ng-1),vt(ng*(ng-1)/2)
+      dimension vs(ng-1,ng-1)
       ng1=ng-1
       ng2=ng*ng1/2
       l=0

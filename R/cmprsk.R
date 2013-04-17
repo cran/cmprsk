@@ -520,3 +520,9 @@ ylab="Probability",lty=1:length(x),color=1,lwd = par('lwd'),...) {
     lines(x[[i]][[1]],x[[i]][[2]],lty=lty[i],col=color[i],lwd=lwd[i],...)
   }
 }
+
+"[.cuminc" <- function(x,i,...) {
+  x <- NextMethod("[")
+  class(x) <- 'cuminc'
+  x
+}

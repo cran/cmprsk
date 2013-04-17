@@ -1,9 +1,10 @@
 94d55d512a9ba36caa9b7df079bae19f *COPYING
-93456b5f1341ea4f4c2c4a976a4ddc9b *DESCRIPTION
-7dbbd1eee406d9d570a8783c459a496b *NAMESPACE
-dd34dde03368b9788a7f432100d3ed06 *R/cmprsk.R
+33d4335de460833d3032bf9508595b79 *DESCRIPTION
+927d1859a098df74df62c590a7ca4420 *NAMESPACE
+6b46c8de1c465658a929acd823fa01f7 *R/cmprsk.R
 12dc51bada87db905ec036e62b8cd44a *man/crr.Rd
 8e35bb36130364553fcd0d80d18283c1 *man/cuminc.Rd
+9aa901885ef9cb0653c5ad154cb08735 *man/extract.cuminc.Rd
 6fa0c161e6dd9b2b9db731b70b2fa3bf *man/plot.cuminc.Rd
 d055318772f89bf1d6ce0c14d5d63331 *man/plot.predict.crr.Rd
 e1377154ce50530a986b51d422d50424 *man/predict.crr.Rd
@@ -11,9 +12,9 @@ e1377154ce50530a986b51d422d50424 *man/predict.crr.Rd
 446fe5bacfb526891869147d40563bf6 *man/print.cuminc.Rd
 6fc86389f06d65ca888dc40e8961b225 *man/summary.crr.Rd
 3d843553233387c43d273a8f721722bb *man/timepoints.Rd
-1fce1b945106108da58a743132bda289 *src/cincsub.f
-57ad2bce51e6b48592326963b50090a0 *src/crr.f
-111f951067144ee90d7299d8db50e261 *src/crstm.f
+c53028d318cc93d99254bb7be508b04c *src/cincsub.f
+abcc0f1aca5c56602513cfb1451bd19a *src/crr.f
+d02825e3238b85f763cea36899825634 *src/crstm.f
 a5c0126cbcc253811db0e486915e6ca9 *src/tpoi.f
 ffcf7be80bea500c4f61cc8bd37fee03 *tests/Rplots.ps
 8c8e6e952b759046af69be4d750bdc63 *tests/test.R

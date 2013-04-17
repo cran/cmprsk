@@ -28,7 +28,7 @@ c      vector, and all the plotting routine has to do to make a plot is
 c      to connect up the points.
 C     THE LAST ELEMENT OF X AND F CONTNUE OUT TO THE largest follow-up time
       implicit double precision (a-h,o-z)
-      dimension x(1),f(1),ic(n),icc(n),v(1),y(n)
+      dimension x(*),f(*),ic(n),icc(n),v(*),y(n)
       fk=1
       nf=0
       v1=0

@@ -1,19 +1,21 @@
 c Copyright (C) 2000 Robert Gray
 c distributed under the terms of the GNU public license
-      subroutine covt(ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
+      subroutine covt(j,k,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
+c j = row index of case in x and x2
+c k = row index of cft in tf
       double precision x(n,ncov),x2(n,ncov2),tf(ndf,ncov2),wk
       double precision b(ncov+ncov2),xbt(ncov+ncov2)
-      integer ncov,ncov2,ndf,i,n
+      integer ncov,ncov2,ndf,i,j,k,n
       wk=0
       if (ncov.gt.0) then
          do 10 i=1,ncov
-            xbt(i)=x(1,i)
-            wk=wk+x(1,i)*b(i)
+            xbt(i)=x(j,i)
+            wk=wk+xbt(i)*b(i)
  10      continue 
       endif
       if (ncov2.gt.0) then
          do 11 i=1,ncov2
-            xbt(i+ncov)=x2(1,i)*tf(1,i)
+            xbt(i+ncov)=x2(j,i)*tf(k,i)
             wk=wk+xbt(i+ncov)*b(ncov+i)
  11      continue 
       endif
@@ -69,8 +71,7 @@ c no more failures
          if (t2(i).lt.cft) go to 14
          itmp=i
          if (ici(i).eq.1) then
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twf=twf+1
 c using a minimization routine, so neg of objective fcn, scores, etc
             lik=lik-wk
@@ -92,12 +93,10 @@ c calculate sums over risk set
       do 15 i=1,n
          if (t2(i).lt.cft) then
             if (ici(i).le.1) go to 15
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)*wt(icg(i),iuc)/wt(icg(i),i)
          else
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)
          endif
          xb1=xb1+twt
@@ -166,8 +165,7 @@ c no more failures
          if (t2(i).lt.cft) go to 14
          itmp=i
          if (ici(i).eq.1) then
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twf=twf+1
             lik=lik-wk
          endif
@@ -178,12 +176,10 @@ c calculate sums over risk set
       do 15 i=1,n
          if (t2(i).lt.cft) then
             if (ici(i).le.1) go to 15
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)*wt(icg(i),iuc)/wt(icg(i),i)
          else
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)
          endif
          xb1=xb1+twt
@@ -215,7 +211,7 @@ c xb,xbt,vt,ss,st,qu,icrsk are temporary storage
       double precision st(np,2),v2(np,np),cft2,qu(np,ncg)
       double precision ss3(np,ncg),ss4(ncg)
       integer ici(n),icg(n),n,np,i,j,ncov,ncov2,ncg,ndf,ldf,k
-      integer lc,icrsk(ncg),j1,j2,ldf2
+      integer lc,icrsk(ncg),j1,j2,ldf2,iflg
       do 3 i=1,ncg
          icrsk(i)=0
  3    continue 
@@ -245,12 +241,10 @@ c xb,xbt,vt,ss,st,qu,icrsk are temporary storage
          do 7 j=1,n
             if (t2(j).lt.t2(i)) then
                if (ici(j).le.1) go to 7
-               call covt(ncov,x(j,1),n,ncov2,x2(j,1),tf(ldf,1),ndf,b,wk,
-     $              xbt)
+               call covt(j,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
                twt=exp(wk)*wt(icg(j),i)/wt(icg(j),j)
             else
-               call covt(ncov,x(j,1),n,ncov2,x2(j,1),tf(ldf,1),ndf,b,wk,
-     $              xbt)
+               call covt(j,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
                twt=exp(wk)
             endif
             xb(i,0)=xb(i,0)+twt
@@ -276,12 +270,10 @@ c
                ldf=ldf+1
             endif
             if (t2(j).le.t2(i)) then
-               call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $              xbt)
+               call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
                twt=exp(wk)
             else if (t2(i).lt.t2(j).and.ici(i).gt.1) then
-               call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $              xbt)
+               call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
                twt=exp(wk)*wt(icg(i),j)/wt(icg(i),i)
             else
                go to 15
@@ -296,8 +288,7 @@ c d lambda hat portion of eta_i
                cft2=t2(i)
                ldf2=ldf2+1
             endif
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf2,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf2,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
 c d N_i portion of eta_i
             do 17 k=1,np
                st(k,1)=st(k,1)+xbt(k)-xb(i,k)/xb(i,0)
@@ -311,12 +302,10 @@ c second derivatives
             do 19 j=1,n
                if (t2(j).lt.t2(i)) then
                   if (ici(j).le.1) go to 19
-                  call covt(ncov,x(j,1),n,ncov2,x2(j,1),tf(ldf2,1),ndf,
-     $              b,wk,xbt)
+                  call covt(j,ldf2,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
                   twt=exp(wk)*wt(icg(j),i)/wt(icg(j),j)
                else
-                  call covt(ncov,x(j,1),n,ncov2,x2(j,1),tf(ldf2,1),ndf,
-     $              b,wk,xbt)
+                  call covt(j,ldf2,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
                   twt=exp(wk)
                endif
                do 18 k=1,np
@@ -335,7 +324,17 @@ c second derivatives
  251        continue 
          endif
 c         call dblepr('st1',3,st(1,1),np)
-         if (i.eq.1.or.t2(i).gt.t2(i-1)) then
+         if (i.eq.1) then
+            iflg=1
+         else
+            if (t2(i).gt.t2(i-1)) then
+               iflg=1
+            else 
+               iflg=0
+            endif
+         endif
+C         if (i.eq.1.or.t2(i).gt.t2(i-1)) then
+         if (iflg.eq.1) then
             do 40 j=i,n
                if (t2(j).gt.t2(i)) go to 39
                if (ici(j).eq.0) go to 38
@@ -368,8 +367,7 @@ c  I(t2(j2)>=s)+I(t2(j2)<s,eps_j2=2), only type 2 failures contribute
                do 541 j2=1,n
                   if (t2(j2).ge.t2(i)) go to 542
                   if (ici(j2).le.1) go to 541
-                  call covt(ncov,x(j2,1),n,ncov2,x2(j2,1),
-     $                 tf(ldf,1),ndf,b,wk,xbt)
+                  call covt(j2,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
                   twt=exp(wk)*wt(icg(j2),j1)/wt(icg(j2),j2)
                   ss4(icg(j2))=ss4(icg(j2))+twt
                   do 256 k=1,np
@@ -476,8 +474,7 @@ c no more failures
          if (t2(i).lt.cft) go to 14
          itmp=i
          if (ici(i).eq.1) then
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twf=twf+1
             do 241 j=1,np
                res(j,ldf)=res(j,ldf)+xbt(j)
@@ -493,12 +490,10 @@ c calculate sums over risk set
       do 15 i=1,n
          if (t2(i).lt.cft) then
             if (ici(i).le.1) go to 15
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)*wt(icg(i),iuc)/wt(icg(i),i)
          else
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)
          endif
          xb1=xb1+twt
@@ -567,12 +562,10 @@ c calculate sums over risk set
       do 15 i=1,n
          if (t2(i).lt.cft) then
             if (ici(i).le.1) go to 15
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)*wt(icg(i),iuc)/wt(icg(i),i)
          else
-            call covt(ncov,x(i,1),n,ncov2,x2(i,1),tf(ldf,1),ndf,b,wk,
-     $           xbt)
+            call covt(i,ldf,ncov,x,n,ncov2,x2,tf,ndf,b,wk,xbt)
             twt=exp(wk)
          endif
          xb1=xb1+twt
