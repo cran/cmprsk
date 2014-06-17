@@ -171,17 +171,11 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                 as.integer(ncg),as.integer(cengroup),as.double(b),
                 double(ndf*np),double(np),double(np),PACKAGE = "cmprsk")[[15]]
     r <- t(matrix(r,nrow=np))
-    bj <- .Fortran('crrfit',as.double(ftime),as.integer(fstatus),
-                as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
-                as.integer(np),as.double(cov2),as.integer(npt),
-                as.double(tfs),as.integer(ndf),as.double(uuu),
-                as.integer(ncg),as.integer(cengroup),as.double(b),
-                double(ndf),double(np),PACKAGE = "cmprsk")[[15]]
 ##
   } else {
     v <- h <- h0 <- matrix(NA,np,np)
     r <- NULL
-    bj <- NULL
+#    bj <- NULL
   }
   nobs <- length(ftime)
   b0 <- rep(0,length(b))
@@ -191,6 +185,12 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
                   as.double(tfs),as.integer(ndf),as.double(uuu),
                   as.integer(ncg),as.integer(cengroup),as.double(b0),
                   double(1),double(np),PACKAGE = "cmprsk")[[15]]
+  bj <- .Fortran('crrfit',as.double(ftime),as.integer(fstatus),
+                  as.integer(length(ftime)),as.double(cov1),as.integer(np-npt),
+                  as.integer(np),as.double(cov2),as.integer(npt),
+                  as.double(tfs),as.integer(ndf),as.double(uuu),
+                  as.integer(ncg),as.integer(cengroup),as.double(b),
+                  double(ndf),double(np),PACKAGE = "cmprsk")[[15]]
   if (nc1>0) {
     x1 <- paste(cov1.name, 1:nc1, sep="")
     if(is.null(cov1.vars)) cov1.vars <- x1

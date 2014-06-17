@@ -65,8 +65,8 @@ scores and var at \code{init}, but performs no iterations)
   initial values of regression parameters (default=all 0)
 }
 \item{variance}{
-  If \code{FALSE}, then suppresses computation of the variance estimate,
-  residuals and underlying hazard 
+  If \code{FALSE}, then suppresses computation of the variance estimate
+  and residuals 
 }
 }
 \value{
@@ -134,7 +134,7 @@ ordinary survival models.  Plotting the jth column of res against the
 vector of unique failure times checks for lack of fit over time in the
 corresponding covariate (column of cov1).
 
-If \code{variance=FALSE}, then \code{predict.crr} cannot be used and
+If \code{variance=FALSE}, then %\code{predict.crr} cannot be used and
 some of the functionality in \code{summary.crr} and \code{print.crr}
 will be lost.  This option can be useful in situations where crr is
 called repeatedly for point estimates, but standard errors are not
