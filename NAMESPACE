@@ -17,3 +17,7 @@ S3method(print,cuminc)
 S3method(plot,cuminc)
 S3method('[',cuminc)
 S3method(plot,predict.crr)
+
+importFrom("graphics", "legend", "lines", "par", "plot")
+importFrom("stats", "approx", "na.omit", "pchisq", "pnorm", "qnorm")
+
