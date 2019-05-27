@@ -1,6 +1,6 @@
 94d55d512a9ba36caa9b7df079bae19f *COPYING
-122f1a3a8e711acc77b886eeb0829914 *DESCRIPTION
-5e33f2be5208d97312807c8e6a38a8c0 *NAMESPACE
+392038af6e83f11fbed8cbb25f03a286 *DESCRIPTION
+461e72de99b929647c52513072bd71b0 *NAMESPACE
 3e0e744d860b0ba3098fbcc8238e053e *R/cmprsk.R
 ab1f8f638eba7c7a13db3225977589a3 *man/crr.Rd
 8e35bb36130364553fcd0d80d18283c1 *man/cuminc.Rd
@@ -15,8 +15,8 @@ e1377154ce50530a986b51d422d50424 *man/predict.crr.Rd
 c53028d318cc93d99254bb7be508b04c *src/cincsub.f
 abcc0f1aca5c56602513cfb1451bd19a *src/crr.f
 d02825e3238b85f763cea36899825634 *src/crstm.f
-0e2e176182c11b9aad0841b5bad384ac *src/init.c
 a5c0126cbcc253811db0e486915e6ca9 *src/tpoi.f
+69651fa2acee0a59b4ca7640947648c7 *tests/Rplots.pdf
 ffcf7be80bea500c4f61cc8bd37fee03 *tests/Rplots.ps
 8c8e6e952b759046af69be4d750bdc63 *tests/test.R
-4e859c6442a3ab7d22594dc0b67f2412 *tests/test.Rout.save
+feaa0da56c2426e03a1d48e620838a4e *tests/test.Rout.save

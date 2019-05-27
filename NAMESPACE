@@ -9,6 +9,8 @@ export("crr","summary.crr","print.summary.crr","predict.crr",
 import(
   survival
 )
+importFrom("graphics", "legend", "lines", "par", "plot")
+importFrom("stats", "approx", "na.omit", "pchisq", "pnorm", "qnorm")
 S3method(summary,crr)
 S3method(print,crr)
 S3method(print,summary.crr)
@@ -17,7 +19,3 @@ S3method(print,cuminc)
 S3method(plot,cuminc)
 S3method('[',cuminc)
 S3method(plot,predict.crr)
-
-importFrom("graphics", "legend", "lines", "par", "plot")
-importFrom("stats", "approx", "na.omit", "pchisq", "pnorm", "qnorm")
-
