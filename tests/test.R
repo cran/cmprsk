@@ -1,6 +1,8 @@
 library(cmprsk)
-u <- R.Version()
-if (u$major>'1' | u$major == '1' & u$minor>'6.2') RNGversion("1.6.2")
+
+options(warn=-1)
+RNGversion("1.6.2")
+options(warn=0)
 
 set.seed(2)
 ss <- rexp(100)

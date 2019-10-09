@@ -1,5 +1,5 @@
 
-R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
 Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
@@ -17,13 +17,10 @@ Type 'q()' to quit R.
 
 > library(cmprsk)
 Loading required package: survival
-> u <- R.Version()
-> if (u$major>'1' | u$major == '1' & u$minor>'6.2') RNGversion("1.6.2")
-Warning messages:
-1: In RNGkind("Marsaglia-Multicarry", "Buggy Kinderman-Ramage", "Rounding") :
-  buggy version of Kinderman-Ramage generator used
-2: In RNGkind("Marsaglia-Multicarry", "Buggy Kinderman-Ramage", "Rounding") :
-  non-uniform 'Rounding' sampler used
+> 
+> options(warn=-1)
+> RNGversion("1.6.2")
+> options(warn=0)
 > 
 > set.seed(2)
 > ss <- rexp(100)
@@ -473,4 +470,4 @@ Pseudo likelihood ratio test = 0  on 1 df,
 > 
 > proc.time()
    user  system elapsed 
-  1.364   0.121   1.475 
+  1.144   0.119   1.251 

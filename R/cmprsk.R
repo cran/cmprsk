@@ -71,7 +71,10 @@ function(ftime,fstatus,cov1,cov2,tf,cengroup,failcode=1,cencode=0,
     u <- do.call('survfit',list(formula=Surv(ftime,cenind)~1,data=
        data.frame(ftime,cenind,cengroup),subset=cengroup==k))
 ### note: want censring dist km at ftime-
-    u <- approx(c(0,u$time,max(u$time)*(1+10*.Machine$double.eps)),c(1,u$surv,
+# changed 9-30-2019 for events at 0
+#    u <- approx(c(0,u$time,max(u$time)*(1+10*.Machine$double.eps)),c(1,u$surv,
+#       0),xout=ftime*(1-100*.Machine$double.eps),method='constant',f=0,rule=2)
+    u <- approx(c(min(0,u$time)-10*.Machine$double.eps,c(u$time,max(u$time)*(1+10*.Machine$double.eps))),c(1,u$surv,
        0),xout=ftime*(1-100*.Machine$double.eps),method='constant',f=0,rule=2)
     uuu[k,1:length(u$y)] <- u$y
 #    u <- summary(u,times=sort(ftime*(1-.Machine$double.eps)))

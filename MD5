@@ -1,7 +1,7 @@
 94d55d512a9ba36caa9b7df079bae19f *COPYING
-392038af6e83f11fbed8cbb25f03a286 *DESCRIPTION
+536ac38436dfabb22388f49a4de680be *DESCRIPTION
 461e72de99b929647c52513072bd71b0 *NAMESPACE
-3e0e744d860b0ba3098fbcc8238e053e *R/cmprsk.R
+aa1eb0328bd94200427d435784ed23de *R/cmprsk.R
 ab1f8f638eba7c7a13db3225977589a3 *man/crr.Rd
 8e35bb36130364553fcd0d80d18283c1 *man/cuminc.Rd
 9aa901885ef9cb0653c5ad154cb08735 *man/extract.cuminc.Rd
@@ -18,5 +18,5 @@ d02825e3238b85f763cea36899825634 *src/crstm.f
 a5c0126cbcc253811db0e486915e6ca9 *src/tpoi.f
 69651fa2acee0a59b4ca7640947648c7 *tests/Rplots.pdf
 ffcf7be80bea500c4f61cc8bd37fee03 *tests/Rplots.ps
-8c8e6e952b759046af69be4d750bdc63 *tests/test.R
-feaa0da56c2426e03a1d48e620838a4e *tests/test.Rout.save
+1da31e98ff10a440ecd5e1bdf564035b *tests/test.R
+e6a3b2729267fbaf070cdf5067fc599d *tests/test.Rout.save
