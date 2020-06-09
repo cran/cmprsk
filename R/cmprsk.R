@@ -379,9 +379,12 @@ cuminc <- function(ftime,fstatus,group,strata,rho=0,cencode=0,subset,na.action=n
   d$group <- factor(d$group,names(ugg)[ugg>0])
   ugg <- levels(d$group)
   censind <- ifelse(d$cause==cencode,0,1)
-  uc <- table(d$cause[censind==1])
-  if (is.factor(d$cause)) uclab <- names(uc)[uc>0]
-  else uclab <- as.numeric(names(uc)[uc>0])
+  if (is.factor(d$cause)) {
+    uc <- table(d$cause[censind==1])
+    uclab <- names(uc)[uc>0]
+  } else {
+    uclab <- sort(unique(d$cause[censind==1])) # as.numeric(names(uc)[uc>0])
+  }
   nc <- length(uclab)
   ng <- length(ugg)
   if (ng>1) {
