@@ -206,7 +206,8 @@ c in notation of the paper, tr is \sum_r\hat{h}_r, and tq is \sum_r R_r
       t5=1
 c following line changed 3-24-04 - had been performed as integer
       if (d(2,k).gt.1) t5=1-(d(2,k)-1.d0)/(rs(k)-1.d0)
-      t3=t5*((skmm(k)**2)*d(2,k))/(rs(k)**2)
+      t6=rs(k)
+      t3=t5*((skmm(k)**2)*d(2,k))/(t6**2)
       v3(k)=v3(k)+t4*t4*t3
       do 80 i=1,ng1
       t1=t4*c(i,k)

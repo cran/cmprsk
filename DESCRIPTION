@@ -1,6 +1,6 @@
 Package: cmprsk
-Version: 2.2-10
-Date: 2020-06-08
+Version: 2.2-11
+Date: 2021-12-23
 Title: Subdistribution Analysis of Competing Risks
 Author: Bob Gray <gray@jimmy.harvard.edu>
 Maintainer: Bob Gray <gray@jimmy.harvard.edu>
@@ -15,6 +15,6 @@ Description: Estimation, testing and regression modeling of
 License: GPL (>= 2)
 URL: https://www.R-project.org
 NeedsCompilation: yes
-Packaged: 2020-06-09 01:05:07 UTC; gray
+Packaged: 2021-12-23 01:56:58 UTC; gray
 Repository: CRAN
-Date/Publication: 2020-06-09 05:30:12 UTC
+Date/Publication: 2022-01-06 15:40:20 UTC

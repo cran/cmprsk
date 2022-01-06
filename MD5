@@ -1,5 +1,5 @@
 94d55d512a9ba36caa9b7df079bae19f *COPYING
-7481e82113847688c569346bcbfff8cb *DESCRIPTION
+d5552eb99359d5afa3dfb15912a2dcc5 *DESCRIPTION
 461e72de99b929647c52513072bd71b0 *NAMESPACE
 33e69a329c50dd9549bb0931f99b1ac4 *R/cmprsk.R
 ab1f8f638eba7c7a13db3225977589a3 *man/crr.Rd
@@ -14,7 +14,7 @@ e1377154ce50530a986b51d422d50424 *man/predict.crr.Rd
 3d843553233387c43d273a8f721722bb *man/timepoints.Rd
 c53028d318cc93d99254bb7be508b04c *src/cincsub.f
 abcc0f1aca5c56602513cfb1451bd19a *src/crr.f
-d02825e3238b85f763cea36899825634 *src/crstm.f
+d61385a3caaebe7220a6edf5adb3f9b6 *src/crstm.f
 a5c0126cbcc253811db0e486915e6ca9 *src/tpoi.f
 69651fa2acee0a59b4ca7640947648c7 *tests/Rplots.pdf
 ffcf7be80bea500c4f61cc8bd37fee03 *tests/Rplots.ps
