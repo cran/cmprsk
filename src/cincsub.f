@@ -50,7 +50,8 @@ C     THE LAST ELEMENT OF X AND F CONTNUE OUT TO THE largest follow-up time
       nd2=0
       do 15 i=ll,l
       nd1=nd1+icc(i)
-  15  nd2=nd2+ic(i)-icc(i)
+      nd2=nd2+ic(i)-icc(i)
+ 15   continue
       nd=nd1+nd2
       if (nd.eq.0) go to 40
       fkn=fk*(rs-nd)/rs

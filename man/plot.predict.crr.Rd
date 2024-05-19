@@ -15,11 +15,11 @@ ylim=c(0, max(x[, -1])), xmin=0, xmax=max(x[, 1]), \dots)
 Output from \code{predict.crr}
 }
 \item{lty}{
-vector of line types. If length is \eqn{<}{<} \# curves, then
+vector of line types. If length is \eqn{<}{<} number of curves, then
 \code{lty[1]} is used for all. 
 }
 \item{color}{
-vector of line colors.  If length is \eqn{<}{<} \# curves, then
+vector of line colors.  If length is \eqn{<}{<} number of curves, then
 \code{color[1]} is used for all. 
 }
 \item{ylim}{

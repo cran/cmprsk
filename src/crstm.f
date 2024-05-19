@@ -91,17 +91,20 @@ c
 c rs(j) will be the risk set size in group j at the current failure time
 c  (initially the sample size in each group)
       do 15 i=1,ng
-  15  rs(i)=0
+      rs(i)=0
+ 15   continue
       do 16 i=1,n
       j=ig(i)
-  16  rs(j)=rs(j)+1
+      rs(j)=rs(j)+1
+ 16   continue
       l=0
       do 11 i=1,ng1
       s(i)=0
       do 12 j=1,i
       l=l+1
-  12  v(l)=0
-  11  continue
+      v(l)=0
+ 12   continue
+ 11   continue
       do 14 i=1,ng
       f1m(i)=0
       f1(i)=0
@@ -109,9 +112,11 @@ c  (initially the sample size in each group)
       skm(i)=1
       v3(i)=0
       do 9 j=1,ng1
-   9  v2(j,i)=0
+      v2(j,i)=0
+ 9    continue
       do 8 j=1,ng
-   8  c(i,j)=0
+      c(i,j)=0
+ 8    continue
   14  continue
       fm=0
       f=0
@@ -130,11 +135,13 @@ c  cause 1, and failing from cause 2, at this time
       do 56 i=1,ng
       d(0,i)=0
       d(1,i)=0
-  56  d(2,i)=0
+      d(2,i)=0
+ 56   continue
       do 57 i=ll,lu
       j=ig(i)
       k=m(i)
-  57  d(k,j)=d(k,j)+1
+      d(k,j)=d(k,j)+1
+ 57   continue
       do 58 i=1,ng
       nd1=nd1+d(1,i)
       nd2=nd2+d(2,i)
@@ -157,29 +164,31 @@ c in notation of the paper, tr is \sum_r\hat{h}_r, and tq is \sum_r R_r
       fb=(1-fm)**rho
       do 66 i=1,ng
       do 166 j=i,ng
-  166 a(i,j)=0
+      a(i,j)=0
+ 166  continue
       if (rs(i).le.0) go to 66
       t1=rs(i)/skmm(i)
       a(i,i)=fb*t1*(1-t1/tr)
-      c(i,i)=c(i,i)+a(i,i)*nd1/(tr*(1-fm))
+      if (a(i,i).ne.0) c(i,i)=c(i,i)+a(i,i)*nd1/(tr*(1-fm))
       k=i+1
       if (k.gt.ng) go to 66
       do 67 j=k,ng
       if (rs(j).le.0) go to 67
       a(i,j)=-fb*t1*rs(j)/(skmm(j)*tr)
-      c(i,j)=c(i,j)+a(i,j)*nd1/(tr*(1-fm))
-  67  continue
-  66  continue
+      if (a(i,j).ne.0) c(i,j)=c(i,j)+a(i,j)*nd1/(tr*(1-fm))
+ 67   continue
+ 66   continue
       do 68 i=2,ng
       k=i-1
       do 69 j=1,k
       a(i,j)=a(j,i)
-  69  c(i,j)=c(j,i)
-  68  continue
+      c(i,j)=c(j,i)
+ 69   continue
+ 68   continue
       do 74 i=1,ng1
       if (rs(i).le.0) go to 74
       s(i)=s(i)+fb*(d(1,i)-nd1*rs(i)*(1-f1m(i))/(skmm(i)*tq))
-  74  continue
+ 74   continue
       if (nd1.le.0) go to 77
       do 72 k=1,ng
       if (rs(k).le.0) go to 72
@@ -222,11 +231,13 @@ c following line changed 3-24-04 - had been performed as integer
   90  if (lu.ge.n) go to 30
       do 91 i=ll,lu
       j=ig(i)
-  91  rs(j)=rs(j)-1
+      rs(j)=rs(j)-1
+ 91   continue
       fm=f
       do 92 i=1,ng
       f1m(i)=f1(i)
-  92  skmm(i)=skm(i)
+      skmm(i)=skm(i)
+  92  continue
       ll=lu+1
       lu=ll
       go to 50
